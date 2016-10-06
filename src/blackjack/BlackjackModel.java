@@ -3,25 +3,38 @@ package blackjack;
 public class BlackjackModel {
 	
 	
-	
-	public static void main(String args[]){
+	public BlackjackModel(){
 		Deck d = new Deck();
 		Hand playerHand= new Hand();
 		Hand dealerHand = new Hand();
 		d.shuffle();
 		
 		dealHands(d, playerHand, dealerHand);
-		showHand(playerHand);
+		//showHand(playerHand);
 		
-		hitCard(d, playerHand);
-		showHand(playerHand);
+		//showHand(playerHand);
+		System.out.println(playerHand.getHandValue());
+		}
+	
+//	public static void main(String args[]){
+//		Deck d = new Deck();
+//		Hand playerHand= new Hand();
+//		Hand dealerHand = new Hand();
+//		d.shuffle();
+//		
+//		dealHands(d, playerHand, dealerHand);
+//		showHand(playerHand);
+//		
+//		hitCard(d, playerHand);
+//		showHand(playerHand);
+//		System.out.println(playerHand.getHandValue());
 			
 //		for(int i=0; i<52; i++)
 //			System.out.println(d.topCard());
 		
 		
 		//playerHand.addCard(d.topCard());
-	}
+	
 	
 	private static void dealHands(Deck d, Hand h1, Hand h2){
 		h1.addCard(d.topCard());
