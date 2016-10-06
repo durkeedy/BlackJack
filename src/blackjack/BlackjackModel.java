@@ -2,11 +2,14 @@ package blackjack;
 
 public class BlackjackModel {
 	
+	private Hand playerHand;
+	private Hand dealerHand;
+	private Deck d;
 	
 	public BlackjackModel(){
-		Deck d = new Deck();
-		Hand playerHand= new Hand();
-		Hand dealerHand = new Hand();
+		d = new Deck();
+		playerHand= new Hand();
+		dealerHand = new Hand();
 		d.shuffle();
 		
 		dealHands(d, playerHand, dealerHand);
@@ -43,15 +46,34 @@ public class BlackjackModel {
 		h2.addCard(d.topCard());
 	}
 	
-	private static void showHand(Hand h){
-		for(int i = 0; i < h.getSize(); i++){
-			System.out.println(h.getCard(i));
+//	private static void showHand(Hand h){
+//		for(int i = 0; i < h.getSize(); i++){
+//			System.out.println(h.getCard(i));
+//			
+//		}
+//	}
+	
+	public void hitCard(Hand h){
+		h.addCard(d.topCard());
+	}
+
+	public Hand getPlayerHand() {
+		return playerHand;
+	}
+
+	public Hand getDealerHand() {
+		return dealerHand;
+	}
+	
+	public void dealerAI(){
+		int dealerHandValue = dealerHand.getHandValue();
+		int playerHandValue = playerHand.getHandValue();
+		if (dealerHandValue < 17 || dealerHandValue <){
 			
 		}
 	}
+
 	
-	private static void hitCard(Deck d, Hand h){
-		h.addCard(d.topCard());
-	}
+	
 	
 }

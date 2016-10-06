@@ -23,7 +23,7 @@ public class Card {
 	
 	@Override
 	public String toString(){
-		return getRank() + " of " + getSuit();
+		return getRank().getValue() + " of " + getSuit();
 	}
 	
 }
