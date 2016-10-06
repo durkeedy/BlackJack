@@ -7,10 +7,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class BlackjackPanel extends JPanel {
 
+	private JTextArea temp;
+	
 	private BlackjackModel model;
 
 	private JButton play;
@@ -33,7 +36,11 @@ public class BlackjackPanel extends JPanel {
 
 	public BlackjackPanel() {
 		model = new BlackjackModel();
+		
+		bListener = new ButtonListener();
 
+		temp = new JTextArea();
+		
 		play = new JButton("Play");
 		play.addActionListener(bListener);
 		quit = new JButton("Quit");
@@ -65,6 +72,11 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.removeAll();
 		mainPanel.revalidate();
 		mainPanel.repaint();
+		
+		southPanel.removeAll();
+		northPanel.removeAll();
+		
+		southPanel.add(temp, BorderLayout.CENTER);
 	}
 	
 	private void displayMenu(){
@@ -98,10 +110,10 @@ public class BlackjackPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent event) {
 			if(event.getSource() == play){
-				
+				displayGame();
 			}
-			else if(event.getSource() == quit){
-				
+			else if(quit == event.getSource()){
+				System.exit(0); 
 			}
 			else if(event.getSource() == options){
 				

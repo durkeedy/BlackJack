@@ -40,4 +40,5 @@ public class BlackjackModel {
 	private static void hitCard(Deck d, Hand h){
 		h.addCard(d.topCard());
 	}
+	
 }
