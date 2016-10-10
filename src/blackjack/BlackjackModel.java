@@ -16,8 +16,9 @@ public class BlackjackModel {
 		//showHand(playerHand);
 		
 		//showHand(playerHand);
-		System.out.println(playerHand.getHandValue());
-		}
+//		System.out.println(playerHand.getHandValue());
+		
+	}
 	
 //	public static void main(String args[]){
 //		Deck d = new Deck();
@@ -68,7 +69,7 @@ public class BlackjackModel {
 	public void dealerAI(){
 		int dealerHandValue = dealerHand.getHandValue();
 		int playerHandValue = playerHand.getHandValue();
-		if (dealerHandValue < 17 || dealerHandValue <){
+		if (dealerHandValue < 17){
 			
 		}
 	}
