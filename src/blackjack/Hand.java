@@ -24,11 +24,18 @@ public class Hand {
 	
 	public int getHandValue(){
 		int total = 0;
+		boolean isAce = false;
 		for(Card c: hand){
+			if (c.getRank() == Rank.ACE)
+				isAce = true;
 			total += c.getRank().getValue();
 		}
+		if (isAce && total <= 11)
+			total += 10;
 		return total;
 	}
+	
+	
 	
 	public int getSize(){
 		return hand.size();
@@ -36,6 +43,10 @@ public class Hand {
 	
 	public Card getCard(int index){
 		return hand.get(index);
+	}
+	
+	public boolean checkBust(){
+		return getHandValue() > 21;
 	}
 	
 }

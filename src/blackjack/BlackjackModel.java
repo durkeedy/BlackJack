@@ -5,14 +5,17 @@ public class BlackjackModel {
 	private Hand playerHand;
 	private Hand dealerHand;
 	private Deck d;
+	private GameStatus status;
 	
 	public BlackjackModel(){
+		status = GameStatus.INPROGRESS;
 		d = new Deck();
 		playerHand= new Hand();
 		dealerHand = new Hand();
 		d.shuffle();
 		
 		dealHands(d, playerHand, dealerHand);
+		
 		//showHand(playerHand);
 		
 		//showHand(playerHand);
@@ -56,6 +59,8 @@ public class BlackjackModel {
 	
 	public void hitCard(Hand h){
 		h.addCard(d.topCard());
+		if (h.checkBust())
+			checkWinner();
 	}
 
 	public Hand getPlayerHand() {
@@ -67,13 +72,32 @@ public class BlackjackModel {
 	}
 	
 	public void dealerAI(){
-		int dealerHandValue = dealerHand.getHandValue();
-		int playerHandValue = playerHand.getHandValue();
-		if (dealerHandValue < 17){
-			
+		while (dealerHand.getHandValue() < 17){
+			hitCard(dealerHand);
 		}
+		checkWinner();
+	}
+	
+	public void checkWinner(){
+		if (playerHand.checkBust())
+			status = GameStatus.DEALERWIN;
+		else if (dealerHand.checkBust())
+			status = GameStatus.PLAYERWIN;
+		else if (dealerHand.getHandValue() > playerHand.getHandValue())
+			status = GameStatus.DEALERWIN;
+		else if (dealerHand.getHandValue() < playerHand.getHandValue())
+			status = GameStatus.PLAYERWIN;
+		else if (dealerHand.getHandValue() == playerHand.getHandValue() && playerHand.getHandValue() == 21 && playerHand.getSize() == 2 && dealerHand.getSize() != 2)
+			status = GameStatus.PLAYERWIN;
+		else if (dealerHand.getHandValue() == playerHand.getHandValue() && playerHand.getHandValue() == 21 && playerHand.getSize() != 2 && dealerHand.getSize() == 2)
+			status = GameStatus.DEALERWIN;
+		else
+			status = GameStatus.PUSH;
 	}
 
+	public GameStatus getStatus(){
+		return status;
+	}
 	
 	
 	
