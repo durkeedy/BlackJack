@@ -86,8 +86,9 @@ public class BlackjackPanel extends JPanel {
 		c = new GridBagConstraints();
 
 		southPanel = new JPanel();
-		// southPanel.setLayout(new GridLayout(3, 1));
-		// southPanel.setPreferredSize(panelDim);
+		northPanel = new JPanel();
+		southPanel.setLayout(new GridBagLayout());
+		northPanel.setLayout(new GridBagLayout());
 
 		logoLabel = new JLabel("BLACKJACK \n\n\n");
 
@@ -99,7 +100,8 @@ public class BlackjackPanel extends JPanel {
 		model = new BlackjackModel();
 		// mainPanel.removeAll();
 		mainPanel.removeAll();
-		// northPanel.removeAll();
+		northPanel.removeAll();
+		southPanel.removeAll();
 
 		// northPanel.add(logoLabel);
 		c.gridx = 0;
@@ -113,13 +115,16 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.add(stayButton, c);
 		c.gridx = 1;
 		c.gridy = 0;
-		mainPanel.add(dealerHandLabel, c);
+		mainPanel.add(northPanel, c);
+		// mainPanel.add(dealerHandLabel, c);
 		c.gridx = 1;
 		c.gridy = 5;
-		mainPanel.add(playerHandLabel, c);
-		c.gridx = 1;
-		c.gridy = 6;
-		mainPanel.add(winnerLabel, c);
+		mainPanel.add(southPanel, c);
+		// add(southPanel, c);
+		// mainPanel.add(playerHandLabel, c);
+		// c.gridx = 1;
+		// c.gridy = 6;
+		// mainPanel.add(winnerLabel, c);
 		add(mainPanel);
 		// mainPanel.add(northPanel, BorderLayout.NORTH);
 		// mainPanel.add(southPanel, BorderLayout.SOUTH);
@@ -127,7 +132,8 @@ public class BlackjackPanel extends JPanel {
 
 		validateBet();
 		betLabel.setText(betString);
-		showHand(model.getPlayerHand(), model.getDealerHand());
+		showPlayerHand(model.getPlayerHand());
+		showDealerHand(model.getDealerHand());
 
 		mainPanel.revalidate();
 		mainPanel.repaint();
@@ -151,7 +157,7 @@ public class BlackjackPanel extends JPanel {
 
 		add(mainPanel);
 		mainPanel.revalidate();
-		mainPanel.repaint();
+		// mainPanel.repaint();
 
 	}
 
@@ -171,29 +177,83 @@ public class BlackjackPanel extends JPanel {
 	}
 
 	private void validateBet() {
-		String betString = JOptionPane.showInputDialog(null, "Place your bet: ");
+		String betString = JOptionPane
+				.showInputDialog(null, "Place your bet: ");
 		if (isInteger(betString)) {
 			this.betString = betString;
 			if (betString != null)
 				this.bet = Integer.parseInt(betString);
 
 		} else {
-			JOptionPane.showMessageDialog(null, "Please type a valid bet! Try again.");
+			JOptionPane.showMessageDialog(null,
+					"Please type a valid bet! Try again.");
 			validateBet();
 		}
 	}
 
-	private void showHand(Hand playerh, Hand dealerh) {
-		playerHandLabel.setText("");
-		dealerHandLabel.setText("");
+	private void showPlayerHand(Hand playerh) {
+		// playerHandLabel.setText("");
+		// dealerHandLabel.setText("");
 		for (int i = 0; i < playerh.getSize(); i++) {
-			playerHandLabel.setText(playerHandLabel.getText() + "  " + playerh.getCard(i).toString());
-		}
-		for (int i = 0; i < dealerh.getSize(); i++) {
-			dealerHandLabel.setText(dealerHandLabel.getText() + "  " + dealerh.getCard(i).toString());
-		}
+			c.gridx = i;
+			c.gridy = 6;
+			southPanel.add(
+					new JLabel(getScaledImage(playerh.getCard(i).getImageIcon()
+							.getImage(), 150, 100)), c);
 
-		mainPanel.repaint();
+		}
+		southPanel.revalidate();
+
+	}
+
+	private void showDealerHand(Hand dealerh) {
+		c.gridx = 0;
+		c.gridy = 0;
+		northPanel.add(
+				new JLabel(getScaledImage(new ImageIcon(
+						"PNG-cards-1.3/Card_back.png").getImage(), 150, 100)),
+				c);
+		c.gridx = 1;
+		c.gridy = 0;
+		northPanel.add(
+				new JLabel(getScaledImage(dealerh.getCard(1).getImageIcon()
+						.getImage(), 150, 100)), c);
+	}
+
+	private void showDealerTurn(Hand dealerh) {
+		northPanel.removeAll();
+		for (int i = 0; i < 2; i++) {
+			c.gridx = i;
+			c.gridy = 0;
+			northPanel.add(
+					new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+							.getImage(), 150, 100)), c);
+		}
+		northPanel.repaint();
+		northPanel.revalidate();
+		for (int i = 2; i < dealerh.getSize(); i++) {
+			c.gridx = i;
+			c.gridy = 0;
+			northPanel.add(
+					new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+							.getImage(), 150, 100)), c);
+			northPanel.revalidate();
+			northPanel.repaint();
+			try {
+				Thread.sleep(800);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static ImageIcon getScaledImage(Image scrImg, int h, int w) {
+		Image img = scrImg;
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.createGraphics();
+		g.drawImage(img, 0, 0, w, h, null, null);
+		ImageIcon newIcon = new ImageIcon(bi);
+		return newIcon;
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -208,20 +268,23 @@ public class BlackjackPanel extends JPanel {
 
 			} else if (event.getSource() == hitButton) {
 				model.hitCard(model.getPlayerHand());
-				showHand(model.getPlayerHand(), model.getDealerHand());
+				showPlayerHand(model.getPlayerHand());
 			} else if (event.getSource() == stayButton) {
 				model.dealerAI();
-				showHand(model.getPlayerHand(), model.getDealerHand());
+				showDealerTurn(model.getDealerHand());
 			}
 
 			if (model.getStatus() == GameStatus.DEALERWIN) {
-				reply = JOptionPane.showConfirmDialog(null, "Dealer wins " + bet * 2 + ", continue playing?", null,
+				reply = JOptionPane.showConfirmDialog(null, "Dealer wins "
+						+ bet * 2 + ", continue playing?", null,
 						JOptionPane.YES_NO_OPTION);
 			} else if (model.getStatus() == GameStatus.PLAYERWIN) {
-				reply = JOptionPane.showConfirmDialog(null, "You win " + bet * 2 + ", continue playing?", null,
+				reply = JOptionPane.showConfirmDialog(null, "You win " + bet
+						* 2 + ", continue playing?", null,
 						JOptionPane.YES_NO_OPTION);
 			} else if (model.getStatus() == GameStatus.PUSH) {
-				reply = JOptionPane.showConfirmDialog(null, "Push, you keep " + bet + ", continue playing?", null,
+				reply = JOptionPane.showConfirmDialog(null, "Push, you keep "
+						+ bet + ", continue playing?", null,
 						JOptionPane.YES_NO_OPTION);
 			} else {
 				return;
@@ -229,7 +292,7 @@ public class BlackjackPanel extends JPanel {
 			if (reply == JOptionPane.YES_OPTION)
 				displayGame();
 			else if (reply == JOptionPane.NO_OPTION)
-				System.exit(0);
+				displayMenu();
 		}
 	}
 

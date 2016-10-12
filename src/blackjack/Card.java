@@ -24,10 +24,10 @@ public class Card {
 		return rank;
 	}
 	public void setImage(ImageIcon i){
-		
+		image = i;
 	}
 	
-	public ImageIcon getImage(){
+	public ImageIcon getImageIcon(){
 		return image;
 	}
 	
