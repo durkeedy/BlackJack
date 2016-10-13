@@ -1,5 +1,22 @@
 package blackjack;
-
+/**
+ * The enum that holds all possible suits for cards.
+ */
 public enum Suit {
-	HEARTS, DIAMONDS, SPADES, CLUBS
+	/**
+	 * Hearts suit.
+	 */
+	HEARTS, 
+	/**
+	 * Diamonds suit.
+	 */
+	DIAMONDS, 
+	/**
+	 * Spades suit.
+	 */
+	SPADES, 
+	/**
+	 * Clubs suit.
+	 */
+	CLUBS
 }
