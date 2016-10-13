@@ -1,6 +1,7 @@
 package blackjack;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -11,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 public class BlackjackPanel extends JPanel {
 
@@ -87,6 +90,10 @@ public class BlackjackPanel extends JPanel {
 
 		southPanel = new JPanel();
 		northPanel = new JPanel();
+		Color color = new Color(50,139,50);
+		northPanel.setBackground(color);
+		southPanel.setBackground(color);
+		mainPanel.setBackground(color);
 		southPanel.setLayout(new GridBagLayout());
 		northPanel.setLayout(new GridBagLayout());
 
@@ -192,14 +199,14 @@ public class BlackjackPanel extends JPanel {
 	}
 
 	private void showPlayerHand(Hand playerh) {
-		// playerHandLabel.setText("");
-		// dealerHandLabel.setText("");
+		JLabel temp;
 		for (int i = 0; i < playerh.getSize(); i++) {
 			c.gridx = i;
 			c.gridy = 6;
-			southPanel.add(
-					new JLabel(getScaledImage(playerh.getCard(i).getImageIcon()
-							.getImage(), 150, 100)), c);
+			temp = new JLabel(getScaledImage(playerh.getCard(i).getImageIcon()
+					.getImage(), 150, 100));
+			temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			southPanel.add(temp, c);
 
 		}
 		southPanel.revalidate();
@@ -207,43 +214,48 @@ public class BlackjackPanel extends JPanel {
 	}
 
 	private void showDealerHand(Hand dealerh) {
+		JLabel temp;
 		c.gridx = 0;
 		c.gridy = 0;
-		northPanel.add(
-				new JLabel(getScaledImage(new ImageIcon(
-						"PNG-cards-1.3/Card_back.png").getImage(), 150, 100)),
-				c);
+		temp = new JLabel(getScaledImage(new ImageIcon(
+				"PNG-cards-1.3/Card_back.png").getImage(), 150, 100));
+		temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		northPanel.add(temp, c);
 		c.gridx = 1;
 		c.gridy = 0;
-		northPanel.add(
-				new JLabel(getScaledImage(dealerh.getCard(1).getImageIcon()
-						.getImage(), 150, 100)), c);
+		temp = new JLabel(getScaledImage(dealerh.getCard(1).getImageIcon()
+				.getImage(), 150, 100));
+		temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		northPanel.add(temp , c);
 	}
 
 	private void showDealerTurn(Hand dealerh) {
 		northPanel.removeAll();
+		JLabel temp;
 		for (int i = 0; i < 2; i++) {
 			c.gridx = i;
 			c.gridy = 0;
-			northPanel.add(
-					new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
-							.getImage(), 150, 100)), c);
+			temp = new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+					.getImage(), 150, 100));
+			temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			northPanel.add(temp , c);
 		}
 		northPanel.repaint();
 		northPanel.revalidate();
 		for (int i = 2; i < dealerh.getSize(); i++) {
 			c.gridx = i;
 			c.gridy = 0;
-			northPanel.add(
-					new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
-							.getImage(), 150, 100)), c);
+			temp = new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+					.getImage(), 150, 100));
+			temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			northPanel.add(temp , c);
 			northPanel.revalidate();
 			northPanel.repaint();
-			try {
-				Thread.sleep(800);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(800);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 
