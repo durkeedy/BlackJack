@@ -101,6 +101,14 @@ public class BlackjackPanel extends JPanel {
      */
     private static final int CARDWIDTH = 100;
     /**
+     * The height of the logo.
+     */
+    private static final int LOGOHEIGHT = 150;
+    /**
+     * The width of the logo.
+     */
+    private static final int LOGOWIDTH = 400;
+    /**
      * The amount of RED in a user created color.
      */
     private static final int RED = 50;
@@ -175,7 +183,10 @@ public class BlackjackPanel extends JPanel {
         southPanel.setLayout(new GridBagLayout());
         northPanel.setLayout(new GridBagLayout());
 
-        logoLabel = new JLabel("BLACKJACK \n\n\n");
+        //http://www.sidebolt.com/app/blackjack/
+        logoLabel = new JLabel(getScaledImage(new ImageIcon(
+        		"PNG-cards-1.3/blackjack_logo.png").getImage(),
+        		LOGOHEIGHT, LOGOWIDTH));
 
         displayMenu();
 
