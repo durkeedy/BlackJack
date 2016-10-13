@@ -57,10 +57,6 @@ public class Card {
 	public final ImageIcon getImageIcon() {
 		return image;
 	}
-	
-	@Override
-	public final String toString() {
-		return getRank().getValue() + " of " + getSuit();
-	}
+
 	
 }
