@@ -263,20 +263,24 @@ public class BlackJackTest {
 			}
 			m.getPlayerHand().addCard(new Card(r,Suit.CLUBS));
 			Assert.assertEquals(m.getPlayerHand().getHandValue(),21);
-			if(m.getDealerHand().getHandValue()==21) {// dealer blackjack
+			if(m.getDealerHand().getHandValue()==21 && m.getDealerHand().getSize()==2) {// dealer blackjack
 				m.checkWinner();
 				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
 			} else{
 				m.dealerAI();
 				if(m.getDealerHand().getHandValue()==21) {
 					Assert.assertEquals(m.getStatus(), GameStatus.PUSH);
-				} else {
+				} else if (m.getDealerHand().getHandValue() < 21){
 					Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
-				}
+				} else
+					Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
 			}
-
+			if(m.getDealerHand().getHandValue()<=21) {
+				m.hitCard(m.getPlayerHand());
+				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+			}
 		}
-		
+
 	}
 
 
