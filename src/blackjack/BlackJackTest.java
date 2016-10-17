@@ -161,4 +161,76 @@ public class BlackJackTest {
 			}
 		}
 	}
+
+	@Test
+	public void testGameStatus() {
+		boolean condition1 = false;
+		boolean condition2 = false;
+		boolean condition3 = false;
+		boolean condition4 = false;
+		boolean condition5 = false;
+		while (condition1 == false || condition2 == false || condition3 == false || condition4 == false || condition5 == false) {
+			BlackjackModel m = new BlackjackModel();
+			Assert.assertEquals(m.getStatus(), GameStatus.INPROGRESS);
+			m.dealerAI();
+			if (m.getDealerHand().getHandValue() > m.getPlayerHand().getHandValue()) {
+				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+				condition1 = true;
+			}
+			else if (m.getDealerHand().getHandValue() == m.getPlayerHand().getHandValue() 
+					&& m.getPlayerHand().getHandValue() == 21 
+					&& m.getPlayerHand().getSize() == 2 
+					&& m.getDealerHand().getSize() != 2) {
+				condition4 = true;
+				Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
+			} else if (m.getDealerHand().getHandValue() == m.getPlayerHand().getHandValue() 
+					&& m.getPlayerHand().getHandValue() == 21 
+					&& m.getPlayerHand().getSize() != 2 
+					&& m.getDealerHand().getSize() == 2) {
+				condition5 = true;
+				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+			}
+			else if (m.getDealerHand().getHandValue() < m.getPlayerHand().getHandValue()) {
+				Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
+				condition2 = true;
+			} else if (m.getDealerHand().getHandValue() == m.getPlayerHand().getHandValue()) {
+				Assert.assertEquals(m.getStatus(), GameStatus.PUSH);
+				condition3 = true;
+			}
+		}
+		BlackjackModel m = new BlackjackModel();
+		for(int i = 0; i < 15; i++)
+			m.hitCard(m.getPlayerHand());
+		
+		Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+	}
+
+	@Test
+	public void testHitCard() {
+		int temp;
+		BlackjackModel m = new BlackjackModel();
+		temp = m.getPlayerHand().getSize();
+		m.hitCard(m.getPlayerHand());
+		Assert.assertNotEquals(m.getPlayerHand().getSize(), temp);
+	}
+
+	@Test
+	public void testDealerAi() {
+		boolean condition1 = false;
+		boolean condition2 = false;
+		while (condition1 == false || condition2 == false) {
+			BlackjackModel m = new BlackjackModel();
+			int temp = m.getDealerHand().getSize();
+			if (m.getDealerHand().getHandValue() < 17) {
+				m.dealerAI();
+				condition1 = true;
+				Assert.assertNotEquals(m.getDealerHand().getSize(), temp);
+			} else if (m.getDealerHand().getHandValue() >= 17) {
+				m.dealerAI();
+				condition2 = true;
+				Assert.assertEquals(m.getDealerHand().getSize(), temp);
+			}
+
+		}
+	}
 }
