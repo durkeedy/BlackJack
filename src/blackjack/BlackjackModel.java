@@ -10,9 +10,17 @@ package blackjack;
 public class BlackjackModel {
 
 	/**
-	 * The instance variable for the players hand.
+	 * The instance variable for the first players hand.
 	 */
-	private Hand playerHand;
+	private Hand player1Hand;
+	/**
+	 * The instance variable for the second players hand.
+	 */
+	private Hand player2Hand;
+	/**
+	 * The instance variable for the third players hand.
+	 */
+	private Hand player3Hand;
 	/**
 	 * The instance variable for the dealers hand.
 	 */
@@ -22,6 +30,10 @@ public class BlackjackModel {
 	 */
 	private Deck d;
 	/**
+	 * The instance variable for the number of players.
+	 */
+	private int numPlayers=1;
+	/**
 	 * The instance variable for the status of the game.
 	 */
 	private GameStatus status;
@@ -30,15 +42,28 @@ public class BlackjackModel {
 	 * The constructor for the model class which creates and shuffles the deck
 	 * and deals the hands.
 	 */
-	public BlackjackModel() {
-		status = GameStatus.INPROGRESS;
+	public BlackjackModel(int numPlayers) {
+		this.numPlayers=numPlayers;
+		status = GameStatus.PLAYER1TURN;
 		d = new Deck();
-		playerHand = new Hand();
+		player1Hand = new Hand();
 		dealerHand = new Hand();
+		if(numPlayers > 1){
+			player2Hand = new Hand();
+		}
+		if(numPlayers > 2){
+			player3Hand = new Hand();
+		}
 		d.shuffle();
-
-		dealHands(d, playerHand, dealerHand);
-
+		if(numPlayers == 1){
+			dealHands(d, player1Hand, dealerHand);
+		}
+		else if(numPlayers == 2){
+			dealHands(d, player1Hand, player2Hand, dealerHand);
+		}
+		else if(numPlayers == 3){
+			dealHands(d, player1Hand, player2Hand, player3Hand, dealerHand);
+		}
 	}
 
 	/**
@@ -55,6 +80,40 @@ public class BlackjackModel {
 		h1.addCard(d.topCard());
 		h2.addCard(d.topCard());
 	}
+	/**
+	 * Private method that deals two cards into each of the given hands
+	 * from the given deck.
+	 * 
+	 * @param d the deck to deal from
+	 * @param h1 the first hand to deal to
+	 * @param h2 the second hand to deal to
+	 */
+	private static void dealHands(final Deck d, final Hand h1, final Hand h2, final Hand h3) {
+		h1.addCard(d.topCard());
+		h2.addCard(d.topCard());
+		h3.addCard(d.topCard());
+		h1.addCard(d.topCard());
+		h2.addCard(d.topCard());
+		h3.addCard(d.topCard());
+	}
+	/**
+	 * Private method that deals two cards into each of the given hands
+	 * from the given deck.
+	 * 
+	 * @param d the deck to deal from
+	 * @param h1 the first hand to deal to
+	 * @param h2 the second hand to deal to
+	 */
+	private static void dealHands(final Deck d, final Hand h1, final Hand h2, final Hand h3, final Hand h4) {
+		h1.addCard(d.topCard());
+		h2.addCard(d.topCard());
+		h3.addCard(d.topCard());
+		h4.addCard(d.topCard());
+		h1.addCard(d.topCard());
+		h2.addCard(d.topCard());
+		h3.addCard(d.topCard());
+		h4.addCard(d.topCard());
+	}
 	
 	/**
 	 * Adds the top card from the deck to the hand given as a parameter.
@@ -64,15 +123,25 @@ public class BlackjackModel {
 	public final void hitCard(final Hand h) {
 		h.addCard(d.topCard());
 		if (h.checkBust()) {
-			checkWinner();
+			checkWinner(h);
 		}
 	}
 	/**
 	 * Returns the hand object of the player.
 	 * @return playerHand the Hand object of the player
 	 */
-	public final Hand getPlayerHand() {
-		return playerHand;
+	public final Hand getPlayerHand(int playerNum) {
+		if(playerNum==1){
+			return player1Hand;
+		}
+		if(playerNum==2){
+			return player2Hand;
+		}
+		if(playerNum==3){
+			return player3Hand;
+		}
+		return null;
+			
 	}
 	/**
 	 * Returns the hand object of the dealer.
@@ -90,13 +159,19 @@ public class BlackjackModel {
 		while (dealerHand.getHandValue() < dealerHitCap) {
 			hitCard(dealerHand);
 		}
-		checkWinner();
+		checkWinner(player1Hand);
+		if(numPlayers > 1){
+			checkWinner(player2Hand);
+		}
+		if(numPlayers > 2){
+			checkWinner(player3Hand);
+		}
 	}
 	/**
 	 * Checks for who won the game based on the rules of blackjack 
 	 * and then sets the status of the game to whichever is appropriate.
 	 */
-	public final void checkWinner() {
+	public final void checkWinner(Hand playerHand) {
 		final int blackjack = 21;
 		if (playerHand.checkBust()) {
 			status = GameStatus.DEALERWIN;
@@ -125,6 +200,12 @@ public class BlackjackModel {
 	 */
 	public final GameStatus getStatus() {
 		return status;
+	}
+	/**
+	 * Sets the current status of the game.
+	 */
+	public final void setStatus( GameStatus status) {
+		this.status = status;
 	}
 
 

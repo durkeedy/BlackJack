@@ -5,6 +5,18 @@ package blackjack;
  */
 public enum GameStatus {
 	/**
+	 * Status that it is player 1's turn.
+	 */
+	PLAYER1TURN,
+	/**
+	 * Status that it is player 2's turn.
+	 */
+	PLAYER2TURN,
+	/**
+	 * Status that it is player 3's turn.
+	 */
+	PLAYER3TURN,
+	/**
 	 * Status that the player wins.
 	 */
 	PLAYERWIN,
@@ -12,10 +24,6 @@ public enum GameStatus {
 	 * Status that the dealer wins.
 	 */
 	DEALERWIN,
-	/**
-	 * Status of the game still in progress.
-	 */
-	INPROGRESS, 
 	/**
 	 * Status of the game in case of a tie.
 	 */

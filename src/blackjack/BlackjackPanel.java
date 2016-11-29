@@ -85,7 +85,11 @@ public class BlackjackPanel extends JPanel {
      */
     private int bet;
     /**
-     * an integer to keep track of the money.
+     * an integer to keep track of the number of players.
+     */
+    private int numPlayers = 1;
+    /**
+     * a double to keep track of the money.
      */
     private double money;
     /**
@@ -196,7 +200,7 @@ public class BlackjackPanel extends JPanel {
      * a method that displays the start of the game.
      */
     private void displayGame() {
-        model = new BlackjackModel();
+        model = new BlackjackModel(numPlayers);
         mainPanel.removeAll();
 
         c.gridx = 0;
@@ -230,7 +234,9 @@ public class BlackjackPanel extends JPanel {
         formatter = NumberFormat.getCurrencyInstance();
         betLabel.setText(formatter.format(bet));
         moneyLabel.setText(formatter.format(money));
-        showPlayerHand(model.getPlayerHand());
+        for(int i=1; i<=numPlayers; i++){
+        	showPlayerHand(model.getPlayerHand(i));
+        }
         showDealerHand(model.getDealerHand());
 
     }
@@ -431,13 +437,23 @@ public class BlackjackPanel extends JPanel {
                 return;
 
             } else if (event.getSource() == hitButton) {
+            	
                 model.hitCard(model.getPlayerHand());
                 showPlayerHand(model.getPlayerHand());
-            } else if (event.getSource() == stayButton) {
+            } 
+            else if (event.getSource() == stayButton) {
+            	if(model.getStatus() == GameStatus.PLAYER1TURN){
+            		model.setStatus(GameStatus.PLAYER2TURN);
+            	}
+            	else if(model.getStatus() == GameStatus.PLAYER2TURN){
+            		model.setStatus(GameStatus.PLAYER3TURN);
+            	}
+            	else{	
                 model.dealerAI();
                 showDealerTurn(model.getDealerHand());
                 moneyLabel.setText(formatter.format(
-                        calculateMoney(model.getPlayerHand())));
+                		calculateMoney(model.getPlayerHand())));
+            	}
             }
 
             if (model.getStatus() == GameStatus.DEALERWIN) {
