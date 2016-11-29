@@ -33,9 +33,17 @@ public class BlackjackPanel extends JPanel {
 	 */
 	private JLabel betLabel;
 	/**
-	 * Creates a JLabel for the money.
+	 * Creates a JLabel for player 1's money.
 	 */
-	private JLabel moneyLabel;
+	private JLabel money1Label;
+	/**
+	 * Creates a JLabel for player 2's money.
+	 */
+	private JLabel money2Label;
+	/**
+	 * Creates a JLabel for player 3's money.
+	 */
+	private JLabel money3Label;
 	/**
 	 * Creates a BlackjackModel.
 	 */
@@ -77,21 +85,45 @@ public class BlackjackPanel extends JPanel {
 	 */
 	private JPanel southPanel;
 	/**
+	 * Creates a south JPanel.
+	 */
+	private JPanel eastPanel;
+	/**
+	 * Creates a south JPanel.
+	 */
+	private JPanel westPanel;
+	/**
 	 * Creates a main JPanel.
 	 */
 	private JPanel mainPanel;
 	/**
-	 * an integer to keep track of the bet.
+	 * an integer to keep track of player 1's bet.
 	 */
-	private int bet;
+	private int bet1;
+	/**
+	 * an integer to keep track of player 2's bet.
+	 */
+	private int bet2;
+	/**
+	 * an integer to keep track of player 3's bet.
+	 */
+	private int bet3;
 	/**
 	 * an integer to keep track of the number of players.
 	 */
-	private int numPlayers = 1;
+	private int numPlayers = 3;
 	/**
-	 * a double to keep track of the money.
+	 * a double to keep track of player 1's money.
 	 */
-	private double money;
+	private double money1;
+	/**
+	 * a double to keep track of player 2's money.
+	 */
+	private double money2;
+	/**
+	 * a double to keep track of player 3's money.
+	 */
+	private double money3;
 	/**
 	 * The starting amount of money.
 	 */
@@ -152,12 +184,20 @@ public class BlackjackPanel extends JPanel {
 
 		bListener = new ButtonListener();
 
-		money = STARTINGMONEY;
+		money1 = STARTINGMONEY;
+		money2 = STARTINGMONEY;
+		money3 = STARTINGMONEY;
 
 		betLabel = new JLabel();
 		betLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		moneyLabel = new JLabel();
-		moneyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		money1Label = new JLabel();
+		money1Label.setHorizontalAlignment(SwingConstants.CENTER);
+		money1Label.setVerticalAlignment(SwingConstants.NORTH);
+		money2Label = new JLabel();
+		money2Label.setHorizontalAlignment(SwingConstants.CENTER);
+		money3Label = new JLabel();
+		money3Label.setHorizontalAlignment(SwingConstants.CENTER);
+		money3Label.setVerticalAlignment(SwingConstants.NORTH);
 
 		playButton = new JButton("Play");
 		playButton.addActionListener(bListener);
@@ -181,11 +221,17 @@ public class BlackjackPanel extends JPanel {
 
 		southPanel = new JPanel();
 		northPanel = new JPanel();
+		eastPanel = new JPanel();
+		westPanel = new JPanel();
 		Color color = new Color(RED, GREEN, BLUE);
 		northPanel.setBackground(color);
 		southPanel.setBackground(color);
+		eastPanel.setBackground(color);
+		westPanel.setBackground(color);
 		mainPanel.setBackground(color);
 		southPanel.setLayout(new GridBagLayout());
+		eastPanel.setLayout(new GridBagLayout());
+		westPanel.setLayout(new GridBagLayout());
 		northPanel.setLayout(new GridBagLayout());
 
 		// http://www.sidebolt.com/app/blackjack/
@@ -220,20 +266,42 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.add(northPanel, c);
 
 		c.gridx = 1;
-		c.gridy = FIVE;
+		c.gridy = FIVE + 1;
 		mainPanel.add(southPanel, c);
 
-		c.gridx = 1;
+		c.gridx = 2;
+		c.gridy = FIVE;
+		mainPanel.add(eastPanel, c);
+
+		c.gridx = 0;
+		c.gridy = FIVE;
+		mainPanel.add(westPanel, c);
+
+		c.gridx = 0;
 		c.gridy = FIVE + 1;
-		mainPanel.add(moneyLabel, c);
+		mainPanel.add(money3Label, c);
+
+		c.gridx = 2;
+		c.gridy = FIVE + 1;
+		mainPanel.add(money1Label, c);
+
+		c.gridx = 1;
+		c.gridy = FIVE + 2;
+		mainPanel.add(money2Label, c);
 
 		add(mainPanel);
-		validateBet();
+		validateBet(1);
+		validateBet(2);
+		validateBet(3);
 		northPanel.removeAll();
 		southPanel.removeAll();
+		eastPanel.removeAll();
+		westPanel.removeAll();
 		formatter = NumberFormat.getCurrencyInstance();
-		betLabel.setText(formatter.format(bet));
-		moneyLabel.setText(formatter.format(money));
+		//betLabel.setText(formatter.format(bet));
+		money1Label.setText(formatter.format(money1));
+		money2Label.setText(formatter.format(money2));
+		money3Label.setText(formatter.format(money3));
 		for (int i = 1; i <= numPlayers; i++) {
 			showPlayerHand(model.getPlayerHand(i));
 		}
@@ -289,21 +357,45 @@ public class BlackjackPanel extends JPanel {
 	/**
 	 * a helper method that checks if the bet is valid.
 	 */
-	private void validateBet() {
-		String betString = JOptionPane.showInputDialog(null, "Place your bet: ");
-		if (isInteger(betString)) {
-			if (betString != null) {
-				if (Integer.parseInt(betString) <= money) {
-					this.bet = Integer.parseInt(betString);
-					money -= bet;
-				} else {
-					JOptionPane.showMessageDialog(null, "Bet is too high! Try again.");
-					validateBet();
-				}
+	private void validateBet(int player) {
+		if (player <= numPlayers) {
+			double money = 0;
+			int bet = 0;
+			if (player == 1){
+				money = money1;
 			}
-		} else {
-			JOptionPane.showMessageDialog(null, "Please type a valid number! Try again.");
-			validateBet();
+			else if (player == 2){
+				money = money2;
+			}
+			else if (player == 3){
+				money = money3;
+			}
+			String betString = JOptionPane.showInputDialog(null, "Place your bet: ");
+			if (isInteger(betString)) {
+				if (betString != null) {
+					if (Integer.parseInt(betString) <= money) {
+						bet = Integer.parseInt(betString);
+						if (player == 1){
+							bet1 = bet;
+							money1 -= bet;
+						}
+						else if (player == 2){
+							money2 -= bet;
+							bet2 = bet;
+						}
+						else if (player == 3){
+							money3 -= bet;
+							bet3 = bet;
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "Bet is too high! Try again.");
+						validateBet(player);
+					}
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Please type a valid number! Try again.");
+				validateBet(player);
+			}
 		}
 	}
 
@@ -317,18 +409,38 @@ public class BlackjackPanel extends JPanel {
 	private double calculateMoney(final int player) {
 		final double timeAndAHalf = 2.5;
 		Hand playerh = model.getPlayerHand(player);
-		
-		if (model.getWinStatus(player) == WinStatus.PLAYERWIN 
-				&& playerh.getSize() == 2
+		double money = 0;
+		int bet = 0;
+		if (player == 1){
+			money = money1;
+			bet = bet1;
+		}
+		else if (player == 2){
+			money = money2;
+			bet = bet2;
+		}
+		else if (player == 3){
+			money = money3;
+			bet = bet3;
+		}
+		System.out.println(money);
+		if (model.getWinStatus(player) == WinStatus.PLAYERWIN && playerh.getSize() == 2
 				&& playerh.getHandValue() == BLACKJACK) {
+			System.out.println("Blackjack " + player);
 			money += (bet * timeAndAHalf);
 		} else if (model.getWinStatus(player) == WinStatus.PLAYERWIN) {
 			money += bet * 2;
+			System.out.println("Win " + player);
 		} else if (model.getWinStatus(player) == WinStatus.PUSH) {
+			System.out.println("Push " + player);
 			money += bet;
 		}
 		return money;
 
+	}
+
+	public int getNumPlayers() {
+		return numPlayers;
 	}
 
 	/**
@@ -338,16 +450,48 @@ public class BlackjackPanel extends JPanel {
 	 *            is the hand that is to be shown
 	 */
 	private void showPlayerHand(final Hand playerh) {
+		if (numPlayers == 1) {
+			southPanel.removeAll();
+		} else if (numPlayers == 2 && playerh == model.getPlayerHand(2)) {
+			westPanel.removeAll();
+		} else if (playerh == model.getPlayerHand(1)) {
+			eastPanel.removeAll();
+		} else if (playerh == model.getPlayerHand(2)) {
+			southPanel.removeAll();
+		} else if (playerh == model.getPlayerHand(3)) {
+			westPanel.removeAll();
+		}
+
 		JLabel temp;
 		for (int i = 0; i < playerh.getSize(); i++) {
 			c.gridx = i;
 			c.gridy = FIVE + 1;
 			temp = new JLabel(getScaledImage(playerh.getCard(i).getImageIcon().getImage(), CARDHEIGHT, CARDWIDTH));
 			temp.setBorder(BorderFactory.createEmptyBorder(FIVE, FIVE, FIVE, FIVE));
-			southPanel.add(temp, c);
+			if (numPlayers == 1) {
+				southPanel.add(temp, c);
+			} else if (numPlayers == 2 && playerh == model.getPlayerHand(2)) {
+				westPanel.add(temp, c);
+			} else if (playerh == model.getPlayerHand(1)) {
+				eastPanel.add(temp, c);
+			} else if (playerh == model.getPlayerHand(2)) {
+				southPanel.add(temp, c);
+			} else if (playerh == model.getPlayerHand(3)) {
+				westPanel.add(temp, c);
+			}
 
 		}
-		southPanel.revalidate();
+		if (numPlayers == 1) {
+			southPanel.revalidate();
+		} else if (numPlayers == 2 && playerh == model.getPlayerHand(2)) {
+			westPanel.revalidate();
+		} else if (playerh == model.getPlayerHand(1)) {
+			eastPanel.revalidate();
+		} else if (playerh == model.getPlayerHand(2)) {
+			southPanel.revalidate();
+		} else if (playerh == model.getPlayerHand(3)) {
+			westPanel.revalidate();
+		}
 
 	}
 
@@ -438,6 +582,8 @@ public class BlackjackPanel extends JPanel {
 		 *            the event to be processed
 		 */
 		public void actionPerformed(final ActionEvent event) {
+			int player = 1;
+
 			if (event.getSource() == playButton) {
 				displayGame();
 			} else if (event.getSource() == quitButton) {
@@ -445,8 +591,7 @@ public class BlackjackPanel extends JPanel {
 			} else if (event.getSource() == optionsButton) {
 				return;
 
-			} else if (event.getSource() == hitButton) {
-				int player=1;
+			} else {
 				if (model.getStatus() == GameStatus.PLAYER1TURN) {
 					player = 1;
 				} else if (model.getStatus() == GameStatus.PLAYER2TURN) {
@@ -454,42 +599,66 @@ public class BlackjackPanel extends JPanel {
 				} else if (model.getStatus() == GameStatus.PLAYER3TURN) {
 					player = 3;
 				}
+			}
+			if (event.getSource() == hitButton) {
 				model.hitCard(player);
 				showPlayerHand(model.getPlayerHand(player));
+				if (model.getWinStatus(player) == WinStatus.DEALERWIN) {
+					if (model.getStatus() == GameStatus.PLAYER1TURN && numPlayers > 1) {
+						model.setStatus(GameStatus.PLAYER2TURN);
+					} else if (model.getStatus() == GameStatus.PLAYER2TURN && numPlayers > 2) {
+						model.setStatus(GameStatus.PLAYER3TURN);
+					} else {
+						model.dealerAI();
+						showDealerTurn(model.getDealerHand());
+						money1Label.setText(formatter.format(calculateMoney(1)));
+						money2Label.setText(formatter.format(calculateMoney(2)));
+						money3Label.setText(formatter.format(calculateMoney(3)));
+					}
+				}
+
 			} else if (event.getSource() == stayButton) {
-				if (model.getStatus() == GameStatus.PLAYER1TURN) {
+				if (model.getStatus() == GameStatus.PLAYER1TURN && numPlayers > 1) {
 					model.setStatus(GameStatus.PLAYER2TURN);
-				} else if (model.getStatus() == GameStatus.PLAYER2TURN) {
+
+				} else if (model.getStatus() == GameStatus.PLAYER2TURN && numPlayers > 2) {
 					model.setStatus(GameStatus.PLAYER3TURN);
+
 				} else {
+					System.out.println("Dealers Turn");
 					model.dealerAI();
 					showDealerTurn(model.getDealerHand());
-//					moneyLabel.setText(formatter.format(calculateMoney(model.getPlayerHand())));
+					money1Label.setText(formatter.format(calculateMoney(1)));
+					money2Label.setText(formatter.format(calculateMoney(2)));
+					money3Label.setText(formatter.format(calculateMoney(3)));
 				}
 			}
-
-//			if (model.getWinStatus() == WinStatus.DEALERWIN) {
-//				reply = JOptionPane.showConfirmDialog(null, "Dealer wins $" + bet * 2 + ", continue playing?", null,
-//						JOptionPane.YES_NO_OPTION);
-//			} else if (model.getWinStatus() == WinStatus.PLAYERWIN && model.getPlayerHand().getSize() == 2
-//					&& model.getPlayerHand().getHandValue() == BLACKJACK) {
-//				reply = JOptionPane.showConfirmDialog(null,
-//						"BlackJack! You win " + formatter.format(bet * (FIVE / 2)) + ", continue playing?", null,
-//						JOptionPane.YES_NO_OPTION);
-//			} else if (model.getWinStatus() == WinStatus.PLAYERWIN) {
-//				reply = JOptionPane.showConfirmDialog(null, "You win $" + bet * 2 + ", continue playing?", null,
-//						JOptionPane.YES_NO_OPTION);
-//			} else if (model.getWinStatus() == WinStatus.PUSH) {
-//				reply = JOptionPane.showConfirmDialog(null, "Push, you keep $" + bet + ", continue playing?", null,
-//						JOptionPane.YES_NO_OPTION);
-//			} else {
-//				return;
-//			}
-			if (reply == JOptionPane.YES_OPTION) {
-				displayGame();
-			} else if (reply == JOptionPane.NO_OPTION) {
-				displayMenu();
-			}
+			// reply = JOptionPane.showConfirmDialog(null, "Dealer wins $" + bet
+			// * 2 + ", continue playing?", null,
+			// JOptionPane.YES_NO_OPTION);
+			// } else if (model.getWinStatus() == WinStatus.PLAYERWIN &&
+			// model.getPlayerHand().getSize() == 2
+			// && model.getPlayerHand().getHandValue() == BLACKJACK) {
+			// reply = JOptionPane.showConfirmDialog(null,
+			// "BlackJack! You win " + formatter.format(bet * (FIVE / 2)) + ",
+			// continue playing?", null,
+			// JOptionPane.YES_NO_OPTION);
+			// } else if (model.getWinStatus() == WinStatus.PLAYERWIN) {
+			// reply = JOptionPane.showConfirmDialog(null, "You win $" + bet * 2
+			// + ", continue playing?", null,
+			// JOptionPane.YES_NO_OPTION);
+			// } else if (model.getWinStatus() == WinStatus.PUSH) {
+			// reply = JOptionPane.showConfirmDialog(null, "Push, you keep $" +
+			// bet + ", continue playing?", null,
+			// JOptionPane.YES_NO_OPTION);
+			// } else {
+			// return;
+			// }
+			// if (reply == JOptionPane.YES_OPTION) {
+			// displayGame();
+			// } else if (reply == JOptionPane.NO_OPTION) {
+			// displayMenu();
+			// }
 		}
 	}
 

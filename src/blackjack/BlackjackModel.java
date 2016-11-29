@@ -32,7 +32,7 @@ public class BlackjackModel {
 	/**
 	 * The instance variable for the number of players.
 	 */
-	private int numPlayers=1;
+	private int numPlayers = 1;
 	/**
 	 * The instance variable for the status of the game.
 	 */
@@ -54,9 +54,11 @@ public class BlackjackModel {
 	 * and deals the hands.
 	 */
 	public BlackjackModel(int numPlayers) {
-		this.numPlayers=numPlayers;
+		this.numPlayers = numPlayers;
 		status = GameStatus.PLAYER1TURN;
-		
+		player1WinStatus = WinStatus.INPROGRESS;
+		player2WinStatus = WinStatus.INPROGRESS;
+		player3WinStatus = WinStatus.INPROGRESS;
 		d = new Deck();
 		player1Hand = new Hand();
 		dealerHand = new Hand();
@@ -172,7 +174,7 @@ public class BlackjackModel {
 		while (dealerHand.getHandValue() < dealerHitCap) {
 			dealerHand.addCard(d.topCard());
 		}
-		for(int i=0; i<numPlayers; i++){
+		for(int i=1; i<= numPlayers; i++){
 			checkWinner(i);
 		}
 	}

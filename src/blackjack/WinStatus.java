@@ -2,6 +2,10 @@ package blackjack;
 
 public enum WinStatus {
 	/**
+	 * Status that the game is still going.
+	 */
+	INPROGRESS,
+	/**
 	 * Status that the player wins.
 	 */
 	PLAYERWIN,
