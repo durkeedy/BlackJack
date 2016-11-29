@@ -15,17 +15,5 @@ public enum GameStatus {
 	/**
 	 * Status that it is player 3's turn.
 	 */
-	PLAYER3TURN,
-	/**
-	 * Status that the player wins.
-	 */
-	PLAYERWIN,
-	/**
-	 * Status that the dealer wins.
-	 */
-	DEALERWIN,
-	/**
-	 * Status of the game in case of a tie.
-	 */
-	PUSH
+	PLAYER3TURN
 }

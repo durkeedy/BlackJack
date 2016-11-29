@@ -37,7 +37,18 @@ public class BlackjackModel {
 	 * The instance variable for the status of the game.
 	 */
 	private GameStatus status;
-
+	/**
+	 * The instance variable for player 1's win status.
+	 */
+	private WinStatus player1WinStatus;
+	/**
+	 * The instance variable for player 2's win status.
+	 */
+	private WinStatus player2WinStatus;
+	/**
+	 * The instance variable for player 3's win status.
+	 */
+	private WinStatus player3WinStatus;
 	/**
 	 * The constructor for the model class which creates and shuffles the deck
 	 * and deals the hands.
@@ -45,6 +56,7 @@ public class BlackjackModel {
 	public BlackjackModel(int numPlayers) {
 		this.numPlayers=numPlayers;
 		status = GameStatus.PLAYER1TURN;
+		
 		d = new Deck();
 		player1Hand = new Hand();
 		dealerHand = new Hand();
@@ -120,12 +132,14 @@ public class BlackjackModel {
 	 * 
 	 * @param h the hand to add a card to
 	 */
-	public final void hitCard(final Hand h) {
+	public final void hitCard(final int player) {
+		Hand h = getPlayerHand(player);
 		h.addCard(d.topCard());
 		if (h.checkBust()) {
-			checkWinner(h);
+			checkWinner(player);
 		}
 	}
+	
 	/**
 	 * Returns the hand object of the player.
 	 * @return playerHand the Hand object of the player
@@ -140,8 +154,7 @@ public class BlackjackModel {
 		if(playerNum==3){
 			return player3Hand;
 		}
-		return null;
-			
+		return null;	
 	}
 	/**
 	 * Returns the hand object of the dealer.
@@ -157,41 +170,49 @@ public class BlackjackModel {
 	public final void dealerAI() {
 		final int dealerHitCap = 17;
 		while (dealerHand.getHandValue() < dealerHitCap) {
-			hitCard(dealerHand);
+			dealerHand.addCard(d.topCard());
 		}
-		checkWinner(player1Hand);
-		if(numPlayers > 1){
-			checkWinner(player2Hand);
-		}
-		if(numPlayers > 2){
-			checkWinner(player3Hand);
+		for(int i=0; i<numPlayers; i++){
+			checkWinner(i);
 		}
 	}
 	/**
 	 * Checks for who won the game based on the rules of blackjack 
 	 * and then sets the status of the game to whichever is appropriate.
 	 */
-	public final void checkWinner(Hand playerHand) {
+	public final void checkWinner(int player){
 		final int blackjack = 21;
+		Hand playerHand = getPlayerHand(player);
+		WinStatus playerWinStatus;
+		
 		if (playerHand.checkBust()) {
-			status = GameStatus.DEALERWIN;
+			playerWinStatus = WinStatus.DEALERWIN;
 		} else if (dealerHand.checkBust()) {
-			status = GameStatus.PLAYERWIN;
+			playerWinStatus = WinStatus.PLAYERWIN;
 		} else if (dealerHand.getHandValue() > playerHand.getHandValue()) {
-			status = GameStatus.DEALERWIN;
+			playerWinStatus = WinStatus.DEALERWIN;
 		} else if (dealerHand.getHandValue() < playerHand.getHandValue()) {
-			status = GameStatus.PLAYERWIN;
+			playerWinStatus = WinStatus.PLAYERWIN;
 		} else if (dealerHand.getHandValue() == playerHand.getHandValue() 
 				&& playerHand.getHandValue() == blackjack 
 				&& playerHand.getSize() == 2 && dealerHand.getSize() != 2) {
-			status = GameStatus.PLAYERWIN;
+			playerWinStatus = WinStatus.PLAYERWIN;
 		} else if (dealerHand.getHandValue() == playerHand.getHandValue() 
 				&& playerHand.getHandValue() == blackjack 
 				&& playerHand.getSize() != 2 
 				&& dealerHand.getSize() == 2) {
-			status = GameStatus.DEALERWIN;
+			playerWinStatus = WinStatus.DEALERWIN;
 		} else {
-			status = GameStatus.PUSH;
+			playerWinStatus = WinStatus.PUSH;
+		}
+		if(player == 1){
+			player1WinStatus = playerWinStatus;
+		}
+		else if(player == 2){
+			player2WinStatus = playerWinStatus;
+		}
+		else if(player == 3){
+			player3WinStatus = playerWinStatus;
 		}
 	}
 	/**
@@ -207,7 +228,19 @@ public class BlackjackModel {
 	public final void setStatus( GameStatus status) {
 		this.status = status;
 	}
-
-
+	
+	public final WinStatus getWinStatus(int player){
+		if (player == 1){
+			return player1WinStatus;
+		}
+		else if (player == 2){
+			return player2WinStatus;
+		}
+		else if (player == 3){
+			return player3WinStatus;
+		}
+		else 
+			return null;
+	}
 
 }
