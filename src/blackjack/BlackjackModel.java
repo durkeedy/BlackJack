@@ -34,6 +34,10 @@ public class BlackjackModel {
 	 */
 	private int numPlayers = 1;
 	/**
+	 * Three (for three players).
+	 */
+	private static final int THREE = 3;
+	/**
 	 * The instance variable for the status of the game.
 	 */
 	private GameStatus status;
@@ -52,9 +56,10 @@ public class BlackjackModel {
 	/**
 	 * The constructor for the model class which creates and shuffles the deck
 	 * and deals the hands.
+	 * @param players is the number of players
 	 */
-	public BlackjackModel(int numPlayers) {
-		this.numPlayers = numPlayers;
+	public BlackjackModel(final int players) {
+		this.numPlayers = players;
 		status = GameStatus.PLAYER1TURN;
 		player1WinStatus = WinStatus.INPROGRESS;
 		player2WinStatus = WinStatus.INPROGRESS;
@@ -62,20 +67,18 @@ public class BlackjackModel {
 		d = new Deck();
 		player1Hand = new Hand();
 		dealerHand = new Hand();
-		if(numPlayers > 1){
+		if (numPlayers > 1) {
 			player2Hand = new Hand();
 		}
-		if(numPlayers > 2){
+		if (numPlayers > 2) {
 			player3Hand = new Hand();
 		}
 		d.shuffle();
-		if(numPlayers == 1){
+		if (numPlayers == 1) {
 			dealHands(d, player1Hand, dealerHand);
-		}
-		else if(numPlayers == 2){
+		} else if (numPlayers == 2) {
 			dealHands(d, player1Hand, player2Hand, dealerHand);
-		}
-		else if(numPlayers == 3){
+		} else if (numPlayers == THREE) {
 			dealHands(d, player1Hand, player2Hand, player3Hand, dealerHand);
 		}
 	}
@@ -101,8 +104,10 @@ public class BlackjackModel {
 	 * @param d the deck to deal from
 	 * @param h1 the first hand to deal to
 	 * @param h2 the second hand to deal to
+	 * @param h3 the third hand to deal to
 	 */
-	private static void dealHands(final Deck d, final Hand h1, final Hand h2, final Hand h3) {
+	private static void dealHands(
+			final Deck d, final Hand h1, final Hand h2, final Hand h3) {
 		h1.addCard(d.topCard());
 		h2.addCard(d.topCard());
 		h3.addCard(d.topCard());
@@ -117,8 +122,11 @@ public class BlackjackModel {
 	 * @param d the deck to deal from
 	 * @param h1 the first hand to deal to
 	 * @param h2 the second hand to deal to
+	 * @param h3 the third hand to deal to
+	 * @param h4 the fourth hand to deal to
 	 */
-	private static void dealHands(final Deck d, final Hand h1, final Hand h2, final Hand h3, final Hand h4) {
+	private static void dealHands(final Deck d, final Hand h1, 
+			final Hand h2, final Hand h3, final Hand h4) {
 		h1.addCard(d.topCard());
 		h2.addCard(d.topCard());
 		h3.addCard(d.topCard());
@@ -132,7 +140,7 @@ public class BlackjackModel {
 	/**
 	 * Adds the top card from the deck to the hand given as a parameter.
 	 * 
-	 * @param h the hand to add a card to
+	 * @param player the player to give a card to
 	 */
 	public final void hitCard(final int player) {
 		Hand h = getPlayerHand(player);
@@ -144,16 +152,15 @@ public class BlackjackModel {
 	
 	/**
 	 * Returns the hand object of the player.
+	 * @param player is the player whose hand is wanted
 	 * @return playerHand the Hand object of the player
 	 */
-	public final Hand getPlayerHand(int playerNum) {
-		if(playerNum==1){
+	public final Hand getPlayerHand(final int player) {
+		if (player == 1) {
 			return player1Hand;
-		}
-		if(playerNum==2){
+		} else if (player == 2) {
 			return player2Hand;
-		}
-		if(playerNum==3){
+		} else if (player == THREE) {
 			return player3Hand;
 		}
 		return null;	
@@ -174,15 +181,16 @@ public class BlackjackModel {
 		while (dealerHand.getHandValue() < dealerHitCap) {
 			dealerHand.addCard(d.topCard());
 		}
-		for(int i=1; i<= numPlayers; i++){
+		for (int i = 1; i <= numPlayers; i++) {
 			checkWinner(i);
 		}
 	}
 	/**
-	 * Checks for who won the game based on the rules of blackjack 
-	 * and then sets the status of the game to whichever is appropriate.
+	 * Checks if the player won the game based on the rules of blackjack 
+	 * and then sets the WinStatus of the game to whichever is appropriate.
+	 * @param player is the player whose WinStatus is being evaluated 
 	 */
-	public final void checkWinner(int player){
+	public final void checkWinner(final int player) {
 		final int blackjack = 21;
 		Hand playerHand = getPlayerHand(player);
 		WinStatus playerWinStatus;
@@ -207,13 +215,11 @@ public class BlackjackModel {
 		} else {
 			playerWinStatus = WinStatus.PUSH;
 		}
-		if(player == 1){
+		if (player == 1) {
 			player1WinStatus = playerWinStatus;
-		}
-		else if(player == 2){
+		} else if (player == 2) {
 			player2WinStatus = playerWinStatus;
-		}
-		else if(player == 3){
+		} else if (player == THREE) {
 			player3WinStatus = playerWinStatus;
 		}
 	}
@@ -226,23 +232,26 @@ public class BlackjackModel {
 	}
 	/**
 	 * Sets the current status of the game.
+	 * @param s is the status to set the game
 	 */
-	public final void setStatus( GameStatus status) {
-		this.status = status;
+	public final void setStatus(final GameStatus s) {
+		this.status = s;
 	}
-	
-	public final WinStatus getWinStatus(int player){
-		if (player == 1){
+	/**
+	 * Gets the current WinStatus of the player.
+	 * @param player is the player whose status to set
+	 * @return the player's win status
+	 */
+	public final WinStatus getWinStatus(final int player) {
+		if (player == 1) {
 			return player1WinStatus;
-		}
-		else if (player == 2){
+		} else if (player == 2) {
 			return player2WinStatus;
-		}
-		else if (player == 3){
+		} else if (player == THREE) {
 			return player3WinStatus;
-		}
-		else 
+		} else {
 			return null;
+		}
 	}
 
 }
