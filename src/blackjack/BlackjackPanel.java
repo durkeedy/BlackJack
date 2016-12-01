@@ -9,7 +9,17 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -111,7 +121,7 @@ public class BlackjackPanel extends JPanel {
 	/**
 	 * an integer to keep track of the number of players.
 	 */
-	private int numPlayers = 3; // FIVE - 2;
+	private int numPlayers = 1;
 	/**
 	 * a double to keep track of player 1's money.
 	 */
@@ -184,25 +194,17 @@ public class BlackjackPanel extends JPanel {
 
 		bListener = new ButtonListener();
 
-		money1 = STARTINGMONEY;
-		money2 = STARTINGMONEY;
-		money3 = STARTINGMONEY;
-
 		betLabel = new JLabel();
 		betLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		money1Label = new JLabel();
 		money1Label.setHorizontalAlignment(SwingConstants.CENTER);
 		money1Label.setVerticalAlignment(SwingConstants.NORTH);
-		if (numPlayers > 1) {
-			money2Label = new JLabel();
-			money2Label.setHorizontalAlignment(SwingConstants.CENTER);
-			money2Label.setVerticalAlignment(SwingConstants.NORTH);
-		}
-		if (numPlayers > 2) {
-			money3Label = new JLabel();
-			money3Label.setHorizontalAlignment(SwingConstants.CENTER);
-			money3Label.setVerticalAlignment(SwingConstants.NORTH);
-		}
+		money2Label = new JLabel();
+		money2Label.setHorizontalAlignment(SwingConstants.CENTER);
+		money2Label.setVerticalAlignment(SwingConstants.NORTH);
+		money3Label = new JLabel();
+		money3Label.setHorizontalAlignment(SwingConstants.CENTER);
+		money3Label.setVerticalAlignment(SwingConstants.NORTH);
 		playButton = new JButton("Play");
 		playButton.addActionListener(bListener);
 		playButton.setPreferredSize(buttonDim);
@@ -325,6 +327,10 @@ public class BlackjackPanel extends JPanel {
 	 * a helper method that displays the main menu.
 	 */
 	private void displayMenu() {
+		money1 = STARTINGMONEY;
+		money2 = STARTINGMONEY;
+		money3 = STARTINGMONEY;
+		
 		mainPanel.removeAll();
 		c.gridx = 1;
 		c.gridy = 1;
@@ -531,6 +537,50 @@ public class BlackjackPanel extends JPanel {
 
 	}
 
+	private void updateLeaderboard() {
+
+	    FileWriter out = null;
+	    File file = new File("leaderboard.txt");
+	    
+	    double[] leaders = new double[13];
+	    
+	    
+	    try {
+			out = new FileWriter("leaderboard.txt");
+			Scanner sc = new Scanner(file);
+			for(int i = 0; i < 10; i++){
+				System.out.println(sc.next());
+			}
+			
+			leaders[10] = money1;
+			if(numPlayers > 1){
+				leaders[11] = money2;
+			}
+			if (numPlayers > 2){
+				leaders[12] = money3;
+			}
+			Arrays.sort(leaders);
+			
+			for(int i = 12; i > 2; i--){
+				out.write(Double.toString(leaders[i]) + "\n");
+			}
+			
+			
+		} catch(IOException e) {
+			
+		} 
+	    finally {
+	          if (out != null) {
+	             try {
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          }
+		}
+	}
+	
 	/**
 	 * shows a hand with one card face up and one card face down.
 	 * 
@@ -634,8 +684,13 @@ public class BlackjackPanel extends JPanel {
 			} else if (event.getSource() == quitButton) {
 				System.exit(0);
 			} else if (event.getSource() == optionsButton) {
+				String[] values = {"1", "2", "3"};
+				Object selection = JOptionPane.showInputDialog(null,
+						"How many players would you like?", "Players",
+						JOptionPane.DEFAULT_OPTION, null, values, "0");
+				
+				numPlayers = Integer.valueOf((String)selection);
 				return;
-
 			} else {
 				if (model.getStatus() == GameStatus.PLAYER1TURN) {
 					player = 1;
@@ -696,12 +751,14 @@ public class BlackjackPanel extends JPanel {
 							calculateMoney(FIVE - 2)));
 				}
 				reply = JOptionPane.showConfirmDialog(null,
-						"Would you like to continue playing with this many players?",
-						null, JOptionPane.YES_NO_OPTION);
+						"Would you like to continue playing with"
+						+ " this many players?", null,
+						JOptionPane.YES_NO_OPTION);
 
 				if (reply == JOptionPane.YES_OPTION) {
 					displayGame();
 				} else if (reply == JOptionPane.NO_OPTION) {
+					updateLeaderboard();
 					displayMenu();
 				}
 			}

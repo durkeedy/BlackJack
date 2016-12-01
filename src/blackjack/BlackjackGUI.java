@@ -34,14 +34,7 @@ final class BlackjackGUI {
      * The height of the frame.
      */
     private static final int FRAMEH = 440;
-    /**
-     * The modifier for the width of the frame.
-     */
-    private static final int WMODIFIER = 150;
-    /**
-     * The Width of the frame.
-     */
-    private static final int HMODIFIER = 100;
+
     /**
      * Displays the GUI for our game.
      * @param args lets eclipse run the main
@@ -51,14 +44,12 @@ final class BlackjackGUI {
         
         JFrame frame = new JFrame("BlackJack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        BlackjackPanel panel = new BlackjackPanel();
-        int width = FRAMEW + panel.getNumPlayers() * WMODIFIER;
-        int height = FRAMEH + panel.getNumPlayers() * HMODIFIER;
+        BlackjackPanel panel = new BlackjackPanel();        
         Color color = new Color(RED, GREEN, BLUE); 
         panel.setBackground(color);
         frame.getContentPane().add(panel);
-        frame.setSize(width, height);
-        frame.setResizable(false);
+        frame.setSize(FRAMEW, FRAMEH);
+        frame.setResizable(true);
         frame.setVisible(true);
 
     }
