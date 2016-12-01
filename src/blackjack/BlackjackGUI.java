@@ -33,7 +33,7 @@ final class BlackjackGUI {
     /**
      * The height of the frame.
      */
-    private static final int FRAMEH = 440;
+    private static final int FRAMEH = 540;
 
     /**
      * Displays the GUI for our game.

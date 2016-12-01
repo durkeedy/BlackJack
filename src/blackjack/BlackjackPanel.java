@@ -2,6 +2,7 @@ package blackjack;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,9 +22,13 @@ import java.util.Scanner;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
 /**
@@ -103,6 +108,10 @@ public class BlackjackPanel extends JPanel {
 	 * Creates a main JPanel.
 	 */
 	private JPanel mainPanel;
+	/**
+	 * Creates a main JPanel.
+	 */
+	private JTextPane leaderBoardField;
 	/**
 	 * an integer to keep track of player 1's bet.
 	 */
@@ -202,6 +211,10 @@ public class BlackjackPanel extends JPanel {
 		money3Label = new JLabel();
 		money3Label.setHorizontalAlignment(SwingConstants.CENTER);
 		money3Label.setVerticalAlignment(SwingConstants.NORTH);
+		leaderBoardField = new JTextPane();
+		leaderBoardField.setEditable(false);
+		leaderBoardField.setFont(new Font("Tahoma", Font.BOLD, 12));
+		leaderBoardField.setText("Leaderboard \n");
 		playButton = new JButton("Play");
 		playButton.addActionListener(bListener);
 		playButton.setPreferredSize(buttonDim);
@@ -298,8 +311,12 @@ public class BlackjackPanel extends JPanel {
 		}
 		add(mainPanel);
 		validateBet(1);
-		validateBet(2);
-		validateBet(FIVE - 2);
+		if (bet1 != 0){
+			validateBet(2);
+			if (bet2 != 0){
+					validateBet(FIVE - 2);
+			}
+		}
 		northPanel.removeAll();
 		southPanel.removeAll();
 		eastPanel.removeAll();
@@ -344,9 +361,36 @@ public class BlackjackPanel extends JPanel {
 		c.gridx = 1;
 		c.gridy = 0;
 		mainPanel.add(logoLabel, c);
+		
+		c.gridx = 0;
+		c.gridy = 2;
+		mainPanel.add(leaderBoardField, c);
+		
+		displayLeaderboard();
 
 		add(mainPanel);
 		mainPanel.revalidate();
+	}
+	
+	private void displayLeaderboard(){
+		File file = new File("leaderboard.txt");
+		leaderBoardField.setText("Leaderboard \n");
+		try {
+			Scanner scanner = new Scanner(file);
+			Scanner scan = scanner;
+			String[] line = new String[2];
+			int i = 1;
+			while (scan.hasNextLine()) {
+				line = scan.nextLine().split("\\s");
+				leaderBoardField.setText(leaderBoardField.getText()
+						+ "\n" + i + ". " + line[0] + " $" + line[1] + "0");
+				i++;
+			}
+			scanner.close();
+			scan.close();
+		} catch (IOException e) {
+			System.out.println("oops. Something went wrong");
+		}   
 	}
 
 	/**
@@ -362,11 +406,12 @@ public class BlackjackPanel extends JPanel {
 		} catch (NumberFormatException e) {
 			if (input == null) {
 				JOptionPane.showMessageDialog(null, 
-						"Every player must have a bet. " 
-								+ "Change the number of player if someone" 
-								+ "does not want to play");
+						"Every player must have a bet. "
+								+ "Returning to menu.");
 				updateLeaderboard();
 				displayMenu();
+				
+				
 				return true;
 			} else {
 				return false;
@@ -447,27 +492,32 @@ public class BlackjackPanel extends JPanel {
 				&& playerh.getSize() == 2
 				&& playerh.getHandValue() == BLACKJACK) {
 			JOptionPane.showMessageDialog(null, "BlackJack! Player " 
-					+ player + " wins " + bet * timeAndAHalf);
+					+ player + " wins " + formatter.format(bet * timeAndAHalf));
 			money += (bet * timeAndAHalf);
 		} else if (model.getWinStatus(player) == WinStatus.PLAYERWIN) {
 			JOptionPane.showMessageDialog(null, "Player " 
-					+ player + " wins! You get " + bet * 2);
+					+ player + " wins! You get " + formatter.format(bet * 2));
 			money += bet * 2;
 		} else if (model.getWinStatus(player) == WinStatus.PUSH) {
 			JOptionPane.showMessageDialog(null, "Player " + player 
-					+ " tied the dealer. You get back " + bet);
+					+ " tied the dealer. You get back " + 
+					formatter.format(bet));
 			money += bet;
 		} else {
 			JOptionPane.showMessageDialog(null, "Player " + player 
 					+ " lost to the dealer. You get nothing");
 		}
 		if (player == 1) {
+			bet1 = 0;
 			money1 = money;
 		} else if (player == 2) {
+			bet2 = 0;
 			money2 = money;
 		} else if (player == FIVE - 2) {
+			bet3 = 0;
 			money3 = money;
 		}
+		
 		return money;
 
 	}
@@ -557,9 +607,7 @@ public class BlackjackPanel extends JPanel {
 				names[i] = lines[i].split("\\s")[0];
 				leaders[i] = Double.parseDouble(lines[i].split("\\s")[1]);
 				i++;
-
 			}
-
 
 			scanner.close();
 			scan.close();
@@ -578,6 +626,16 @@ public class BlackjackPanel extends JPanel {
 					double userMoney = money, tempMoney;
 					String userString = JOptionPane.showInputDialog(null,
 							" Player " + (i+1) + " please enter your name for the leaderboard.");
+					if (userString == null){
+						
+					}
+					else{
+					while (userString.equals("")) {
+						userString = JOptionPane.showInputDialog(null,
+								" Player " + (i+1) + " invalid name, please try again.");
+					}
+					userString = userString.trim();
+					userString = userString.replaceAll("\\s+", "");
 					String tempString;
 					for (int j = 0; j <10 ; j++) {
 						if(leaders[j] < userMoney){
@@ -590,6 +648,7 @@ public class BlackjackPanel extends JPanel {
 						}
 					}
 				}
+				}
 				if(i == 0){
 					money = money2;
 				}
@@ -597,16 +656,18 @@ public class BlackjackPanel extends JPanel {
 					money = money3;
 				}
 		}
+				
 		for (int i = 0; i <10 ; i++) {
-			bw.write(names[i] + " " +leaders[i]);
-			bw.newLine();
+			if(names[i] != null){
+				bw.write(names[i] + " " +leaders[i]);
+				bw.newLine();
+			}
 		}
 
 		bw.close();
 
 
 	} catch(IOException e) {
-		System.out.println("oops. Something went wrong");
 	} 
 }
 
@@ -717,8 +778,9 @@ private class ButtonListener implements ActionListener {
 			Object selection = JOptionPane.showInputDialog(null,
 					"How many players would you like?", "Players",
 					JOptionPane.DEFAULT_OPTION, null, values, "0");
-
-			numPlayers = Integer.valueOf((String)selection);
+			if(selection != null){
+				numPlayers = Integer.valueOf((String)selection);
+			}
 			return;
 		} else {
 			if (model.getStatus() == GameStatus.PLAYER1TURN) {
