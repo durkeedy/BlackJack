@@ -9,14 +9,11 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -536,53 +533,53 @@ public class BlackjackPanel extends JPanel {
 		}
 
 	}
-
+	/**
+	 * updates the leaderboard.
+	 */
 	private void updateLeaderboard() {
-
-	    FileWriter out = null;
+		final int newPeople = 13;
+		final int topTen = 10;
+	    double[] leaders = new double[newPeople];
 	    File file = new File("leaderboard.txt");
 	    
-	    double[] leaders = new double[13];
-	    
+	    try {
+	    	Scanner scanner = new Scanner(file);
+			Scanner scan = scanner.useDelimiter("\\s*\\n");
+	    	int i = 0; 
+	        while (scan.hasNextDouble()) {
+	            leaders[i] = scan.nextDouble();
+	            i++;
+	        }
+	        scanner.close();
+	        scan.close();
+			
+			
+		} catch (IOException e) {
+			System.out.println("oops. Something went wrong");
+		} 	    
 	    
 	    try {
-			out = new FileWriter(file);
-			Scanner sc = new Scanner(file);
-			String s = sc.nextLine();
-			System.out.println(s);
-			while (sc.hasNextLine()) {
-				s = sc.nextLine();
-				System.out.println(s);
-			}
-			sc.close();
-			
-			leaders[10] = money1;
-			if(numPlayers > 1){
-				leaders[11] = money2;
-			}
-			if (numPlayers > 2){
-				leaders[12] = money3;
-			}
-			Arrays.sort(leaders);
-			
-			for(int i = 12; i > 2; i--){
-				out.write(Double.toString(leaders[i]) + "\n");
-			}
+	    	leaders[topTen] = money1;
+	    	if(numPlayers > 1){
+	    		leaders[topTen + 1] = money2;
+	    	}
+	    	if(numPlayers > 2) {
+	    		leaders[topTen + 2] = money3;
+	    	}
+	    	FileOutputStream fos = new FileOutputStream(file);
+	    	BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+	    	Arrays.sort(leaders);
+	    	for (int i = topTen + 2; i > 2; i--) {
+	    		bw.write("" + leaders[i]);
+	    		bw.newLine();
+	    	}
+	     
+	    	bw.close();
 			
 			
 		} catch(IOException e) {
-			
+			System.out.println("oops. Something went wrong");
 		} 
-	    finally {
-	          if (out != null) {
-	             try {
-					out.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	          }
-		}
 	}
 	
 	/**
