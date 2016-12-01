@@ -546,11 +546,15 @@ public class BlackjackPanel extends JPanel {
 	    
 	    
 	    try {
-			out = new FileWriter("leaderboard.txt");
+			out = new FileWriter(file);
 			Scanner sc = new Scanner(file);
-			for(int i = 0; i < 10; i++){
-				System.out.println(sc.next());
+			String s = sc.nextLine();
+			System.out.println(s);
+			while (sc.hasNextLine()) {
+				s = sc.nextLine();
+				System.out.println(s);
 			}
+			sc.close();
 			
 			leaders[10] = money1;
 			if(numPlayers > 1){
