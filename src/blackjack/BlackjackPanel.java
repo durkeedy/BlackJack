@@ -848,7 +848,6 @@ public class BlackjackPanel extends JPanel {
 			}
 			numPlayers = Integer.parseInt(lines[0]);
 			money1 = Double.parseDouble(lines[1]) - bet1;
-			System.out.println(money1);
 			if(numPlayers > 1){
 				money2 = Double.parseDouble(lines[2]) - bet2;
 			}
