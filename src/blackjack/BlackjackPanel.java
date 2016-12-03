@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -61,6 +62,10 @@ public class BlackjackPanel extends JPanel {
 	 */
 	private BlackjackModel model;
 	/**
+	 * Creates a menu JButton.
+	 */
+	private JButton menuButton;
+	/**
 	 * Creates a play JButton.
 	 */
 	private JButton playButton;
@@ -72,6 +77,18 @@ public class BlackjackPanel extends JPanel {
 	 * Creates an options JButton.
 	 */
 	private JButton optionsButton;
+	/**
+	 * Creates a JButton to change the number of players.
+	 */
+	private JButton playersButton;
+	/**
+	 * Creates a save JButton.
+	 */
+	private JButton saveButton;
+	/**
+	 * Creates a load JButton.
+	 */
+	private JButton loadButton;
 	/**
 	 * Creates a hit JButton.
 	 */
@@ -221,6 +238,18 @@ public class BlackjackPanel extends JPanel {
 		quitButton = new JButton("Quit");
 		quitButton.addActionListener(bListener);
 		quitButton.setPreferredSize(buttonDim);
+		playersButton = new JButton("Players");
+		playersButton.addActionListener(bListener);
+		playersButton.setPreferredSize(buttonDim);
+		menuButton = new JButton("Menu");
+		menuButton.addActionListener(bListener);
+		menuButton.setPreferredSize(buttonDim);
+		saveButton = new JButton("Save");
+		saveButton.addActionListener(bListener);
+		saveButton.setPreferredSize(buttonDim);
+		loadButton = new JButton("Load");
+		loadButton.addActionListener(bListener);
+		loadButton.setPreferredSize(buttonDim);
 		optionsButton = new JButton("Options");
 		optionsButton.addActionListener(bListener);
 		optionsButton.setPreferredSize(buttonDim);
@@ -266,20 +295,20 @@ public class BlackjackPanel extends JPanel {
 		model = new BlackjackModel(numPlayers);
 		mainPanel.removeAll();
 
+		c.gridx = 1;
+		c.gridy = 0;
+		mainPanel.add(saveButton, c);
+		
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		mainPanel.add(hitButton, c);
 
-		c.gridx = 1;
-		c.gridy = 1;
-		// mainPanel.add(betLabel, c);
-
 		c.gridx = 2;
-		c.gridy = 1;
+		c.gridy = 2;
 		mainPanel.add(stayButton, c);
 
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		mainPanel.add(northPanel, c);
 
 		c.gridx = 1;
@@ -310,19 +339,20 @@ public class BlackjackPanel extends JPanel {
 			mainPanel.add(money2Label, c);
 		}
 		add(mainPanel);
-		validateBet(1);
-		if (bet1 != 0){
-			validateBet(2);
-			if (bet2 != 0){
-					validateBet(FIVE - 2);
-			}
-		}
+		
 		northPanel.removeAll();
 		southPanel.removeAll();
 		eastPanel.removeAll();
 		westPanel.removeAll();
 		formatter = NumberFormat.getCurrencyInstance();
-		// betLabel.setText(formatter.format(bet));
+		
+		validateBet(1);
+		if (bet1 != 0){
+			validateBet(2);
+			if (bet2 != 0){
+				validateBet(FIVE - 2);
+			}
+		}
 		money1Label.setText(formatter.format(money1));
 		if (numPlayers > 1) {
 			money2Label.setText(formatter.format(money2));
@@ -330,48 +360,73 @@ public class BlackjackPanel extends JPanel {
 		if (numPlayers > 2) {
 			money3Label.setText(formatter.format(money3));
 		}
+		
 		for (int i = 1; i <= numPlayers; i++) {
 			showPlayerHand(model.getPlayerHand(i));
 		}
-		showDealerHand(model.getDealerHand());
 
+		showDealerHand(model.getDealerHand());
 	}
 
 	/**
 	 * a helper method that displays the main menu.
 	 */
 	private void displayMenu() {
+		if(model != null){
+			model.setStatus(GameStatus.PLAYER1TURN);
+		}
 		money1 = STARTINGMONEY;
 		money2 = STARTINGMONEY;
 		money3 = STARTINGMONEY;
-
 		mainPanel.removeAll();
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = 1;
+		c.insets = new Insets(0,25,0,0);
 		mainPanel.add(playButton, c);
-
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = 2;
 		mainPanel.add(optionsButton, c);
-
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = FIVE - 2;
 		mainPanel.add(quitButton, c);
+		c.insets = new Insets(0,0,0,0);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = 3;
+		mainPanel.add(logoLabel, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		c.gridheight = 5;
+		mainPanel.add(leaderBoardField, c);
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		displayLeaderboard();
+		add(mainPanel);
+		mainPanel.revalidate();
+		mainPanel.repaint();
+	}
 
+	private void displayOptions(){		
+		mainPanel.removeAll();
 		c.gridx = 1;
 		c.gridy = 0;
 		mainPanel.add(logoLabel, c);
-		
-		c.gridx = 0;
+		c.gridx = 1;
+		c.gridy = 1;
+		mainPanel.add(playersButton, c);
+		c.gridx = 1;
 		c.gridy = 2;
-		mainPanel.add(leaderBoardField, c);
-		
-		displayLeaderboard();
-
+		mainPanel.add(loadButton, c);
+		c.gridx = 1;
+		c.gridy = FIVE -2;
+		mainPanel.add(menuButton, c);
 		add(mainPanel);
 		mainPanel.revalidate();
+		mainPanel.repaint();
+		
 	}
-	
+
 	private void displayLeaderboard(){
 		File file = new File("leaderboard.txt");
 		leaderBoardField.setText("Leaderboard \n");
@@ -389,7 +444,7 @@ public class BlackjackPanel extends JPanel {
 			scanner.close();
 			scan.close();
 		} catch (IOException e) {
-			System.out.println("oops. Something went wrong");
+
 		}   
 	}
 
@@ -410,8 +465,8 @@ public class BlackjackPanel extends JPanel {
 								+ "Returning to menu.");
 				updateLeaderboard();
 				displayMenu();
-				
-				
+
+
 				return true;
 			} else {
 				return false;
@@ -517,7 +572,7 @@ public class BlackjackPanel extends JPanel {
 			bet3 = 0;
 			money3 = money;
 		}
-		
+
 		return money;
 
 	}
@@ -614,7 +669,7 @@ public class BlackjackPanel extends JPanel {
 
 
 		} catch (IOException e) {
-			System.out.println("oops. Something went wrong");
+
 		}    
 
 		try {
@@ -627,27 +682,27 @@ public class BlackjackPanel extends JPanel {
 					String userString = JOptionPane.showInputDialog(null,
 							" Player " + (i+1) + " please enter your name for the leaderboard.");
 					if (userString == null){
-						
+
 					}
 					else{
-					while (userString.equals("")) {
-						userString = JOptionPane.showInputDialog(null,
-								" Player " + (i+1) + " invalid name, please try again.");
-					}
-					userString = userString.trim();
-					userString = userString.replaceAll("\\s+", "");
-					String tempString;
-					for (int j = 0; j <10 ; j++) {
-						if(leaders[j] < userMoney){
-							tempMoney = leaders[j];
-							leaders[j] = userMoney;
-							userMoney = tempMoney;
-							tempString = names[j];
-							names[j] = userString;
-							userString = tempString;
+						while (userString.equals("")) {
+							userString = JOptionPane.showInputDialog(null,
+									" Player " + (i+1) + " invalid name, please try again.");
+						}
+						userString = userString.trim();
+						userString = userString.replaceAll("\\s+", "");
+						String tempString;
+						for (int j = 0; j <10 ; j++) {
+							if(leaders[j] < userMoney){
+								tempMoney = leaders[j];
+								leaders[j] = userMoney;
+								userMoney = tempMoney;
+								tempString = names[j];
+								names[j] = userString;
+								userString = tempString;
+							}
 						}
 					}
-				}
 				}
 				if(i == 0){
 					money = money2;
@@ -655,204 +710,289 @@ public class BlackjackPanel extends JPanel {
 				if (i == 1){
 					money = money3;
 				}
-		}
-				
-		for (int i = 0; i <10 ; i++) {
-			if(names[i] != null){
-				bw.write(names[i] + " " +leaders[i]);
-				bw.newLine();
 			}
-		}
 
-		bw.close();
+			for (int i = 0; i <10 ; i++) {
+				if(names[i] != null){
+					bw.write(names[i] + " " +leaders[i]);
+					bw.newLine();
+				}
+			}
+
+			bw.close();
 
 
-	} catch(IOException e) {
-	} 
-}
+		} catch(IOException e) {
+		} 
+	}
 
-/**
- * shows a hand with one card face up and one card face down.
- * 
- * @param dealerh
- *            the hand to show
- */
-private void showDealerHand(final Hand dealerh) {
-	JLabel temp;
-	c.gridx = 0;
-	c.gridy = 0;
-	temp = new JLabel(
-			getScaledImage(new ImageIcon("PNG-cards-1.3/Card_back.png")
-					.getImage(), CARDHEIGHT, CARDWIDTH));
-	temp.setBorder(BorderFactory.createEmptyBorder(
-			FIVE, FIVE, FIVE, FIVE));
-	northPanel.add(temp, c);
-	c.gridx = 1;
-	c.gridy = 0;
-	temp = new JLabel(getScaledImage(dealerh.getCard(1).getImageIcon()
-			.getImage(), CARDHEIGHT, CARDWIDTH));
-	temp.setBorder(BorderFactory.createEmptyBorder(
-			FIVE, FIVE, FIVE, FIVE));
-	northPanel.add(temp, c);
-}
-
-/**
- * shows the dealers turn.
- * 
- * @param dealerh
- *            the dealers hand
- */
-private void showDealerTurn(final Hand dealerh) {
-	northPanel.removeAll();
-	JLabel temp;
-	for (int i = 0; i < 2; i++) {
-		c.gridx = i;
+	/**
+	 * shows a hand with one card face up and one card face down.
+	 * 
+	 * @param dealerh
+	 *            the hand to show
+	 */
+	private void showDealerHand(final Hand dealerh) {
+		JLabel temp;
+		c.gridx = 0;
 		c.gridy = 0;
-		temp = new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+		temp = new JLabel(
+				getScaledImage(new ImageIcon("PNG-cards-1.3/Card_back.png")
+						.getImage(), CARDHEIGHT, CARDWIDTH));
+		temp.setBorder(BorderFactory.createEmptyBorder(
+				FIVE, FIVE, FIVE, FIVE));
+		northPanel.add(temp, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		temp = new JLabel(getScaledImage(dealerh.getCard(1).getImageIcon()
 				.getImage(), CARDHEIGHT, CARDWIDTH));
 		temp.setBorder(BorderFactory.createEmptyBorder(
 				FIVE, FIVE, FIVE, FIVE));
 		northPanel.add(temp, c);
 	}
-	northPanel.repaint();
-	northPanel.revalidate();
-	for (int i = 2; i < dealerh.getSize(); i++) {
-		c.gridx = i;
-		c.gridy = 0;
-		temp = new JLabel(getScaledImage(dealerh.getCard(i)
-				.getImageIcon().getImage(), CARDHEIGHT, CARDWIDTH));
-		temp.setBorder(BorderFactory.createEmptyBorder(
-				FIVE, FIVE, FIVE, FIVE));
-		northPanel.add(temp, c);
-		northPanel.repaint();
-	}
-}
-
-/**
- * Resizes an images into an image of h height and w width.
- * 
- * @param scrImg
- *            the image to resize
- * @param h
- *            the height
- * @param w
- *            the width
- * @return the resized image
- */
-private static ImageIcon getScaledImage(
-		final Image scrImg, final int h, final int w) {
-	Image img = scrImg;
-	BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	Graphics g = bi.createGraphics();
-	g.drawImage(img, 0, 0, w, h, null, null);
-	ImageIcon newIcon = new ImageIcon(bi);
-	return newIcon;
-}
-
-/**
- * Creates a button listener.
- * 
- * @author Daniel and Dylan
- */
-private class ButtonListener implements ActionListener {
-	/**
-	 * the response from a yes_no_option.
-	 */
-	private int reply = 1;
 
 	/**
-	 * receives the actionEvent and processes it.
+	 * shows the dealers turn.
 	 * 
-	 * @param event
-	 *            the event to be processed
+	 * @param dealerh
+	 *            the dealers hand
 	 */
-	public void actionPerformed(final ActionEvent event) {
-		int player = 1;
-
-		if (event.getSource() == playButton) {
-			displayGame();
-		} else if (event.getSource() == quitButton) {
-			System.exit(0);
-		} else if (event.getSource() == optionsButton) {
-			String[] values = {"1", "2", "3"};
-			Object selection = JOptionPane.showInputDialog(null,
-					"How many players would you like?", "Players",
-					JOptionPane.DEFAULT_OPTION, null, values, "0");
-			if(selection != null){
-				numPlayers = Integer.valueOf((String)selection);
-			}
-			return;
-		} else {
-			if (model.getStatus() == GameStatus.PLAYER1TURN) {
-				player = 1;
-			} else if (model.getStatus() == GameStatus.PLAYER2TURN) {
-				player = 2;
-			} else if (model.getStatus() == GameStatus.PLAYER3TURN) {
-				player = FIVE - 2;
-			}
+	private void showDealerTurn(final Hand dealerh) {
+		northPanel.removeAll();
+		JLabel temp;
+		for (int i = 0; i < 2; i++) {
+			c.gridx = i;
+			c.gridy = 0;
+			temp = new JLabel(getScaledImage(dealerh.getCard(i).getImageIcon()
+					.getImage(), CARDHEIGHT, CARDWIDTH));
+			temp.setBorder(BorderFactory.createEmptyBorder(
+					FIVE, FIVE, FIVE, FIVE));
+			northPanel.add(temp, c);
 		}
-		if (event.getSource() == hitButton) {
-			model.hitCard(player);
-			showPlayerHand(model.getPlayerHand(player));
-			if (model.getWinStatus(player) == WinStatus.DEALERWIN) {
+		northPanel.repaint();
+		northPanel.revalidate();
+		for (int i = 2; i < dealerh.getSize(); i++) {
+			c.gridx = i;
+			c.gridy = 0;
+			temp = new JLabel(getScaledImage(dealerh.getCard(i)
+					.getImageIcon().getImage(), CARDHEIGHT, CARDWIDTH));
+			temp.setBorder(BorderFactory.createEmptyBorder(
+					FIVE, FIVE, FIVE, FIVE));
+			northPanel.add(temp, c);
+			northPanel.repaint();
+		}
+	}
 
-				if (model.getStatus() == GameStatus.PLAYER1TURN 
-						&& numPlayers > 1) {
-					model.setStatus(GameStatus.PLAYER2TURN);
-					JOptionPane.showMessageDialog(null, 
-							"Player 1 Busts! Player 2's turn.");
-				} else if (model.getStatus() == GameStatus.PLAYER2TURN 
-						&& numPlayers > 2) {
-					model.setStatus(GameStatus.PLAYER3TURN);
-					JOptionPane.showMessageDialog(null,
-							"Player 2 Busts! Player 3's turn.");
-				} else {
-					model.setStatus(GameStatus.FINISHED);
-					JOptionPane.showMessageDialog(null, "Player " 
-							+ player + " Busts! Dealer's turn.");
+	/**
+	 * Resizes an images into an image of h height and w width.
+	 * 
+	 * @param scrImg
+	 *            the image to resize
+	 * @param h
+	 *            the height
+	 * @param w
+	 *            the width
+	 * @return the resized image
+	 */
+	private static ImageIcon getScaledImage(
+			final Image scrImg, final int h, final int w) {
+		Image img = scrImg;
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.createGraphics();
+		g.drawImage(img, 0, 0, w, h, null, null);
+		ImageIcon newIcon = new ImageIcon(bi);
+		return newIcon;
+	}
+	/**
+	 * Saves the game.
+	 */
+	private void saveGame(){
+		try {
+			File file = new File("save.txt");
+			FileOutputStream fos = new FileOutputStream(file);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			double money = money1;
+			bw.write("" + numPlayers);
+			bw.newLine();
+			for(int i = 0; i < numPlayers; i++) {	
+				
+				bw.write("" + money);
+				bw.newLine();
+				if(i==0){
+					money = money2;
 				}
+				if(i==1){
+					money = money3;
+				}
+				
 			}
-		} else if (event.getSource() == stayButton) {
-			if (model.getStatus() == GameStatus.PLAYER1TURN 
-					&& numPlayers > 1) {
-				model.setStatus(GameStatus.PLAYER2TURN);
-				JOptionPane.showMessageDialog(null,
-						"Player 1 Stays! Player 2's turn.");
-			} else if (model.getStatus() == GameStatus.PLAYER2TURN 
-					&& numPlayers > 2) {
-				model.setStatus(GameStatus.PLAYER3TURN);
-				JOptionPane.showMessageDialog(null, 
-						"Player 2 Stays! Player 3's turn.");
-
-			} else {
-				model.setStatus(GameStatus.FINISHED);
-				JOptionPane.showMessageDialog(null, 
-						"Player " + player + " Stays! Dealer's turn.");
+			bw.close();
+		} catch(IOException e) {
+			
+		} 
+	}
+	/**
+	 * Loads the game.
+	 */
+	private void loadGame(){
+		try {
+			File file = new File("save.txt");
+			Scanner scanner = new Scanner(file);
+			Scanner scan = scanner;
+			int i = 0; 
+			final int topTen = 10;
+			String[] lines = new String[topTen];
+			while (scan.hasNextLine()) {
+				lines[i] = scan.nextLine();
+				i++;
 			}
-		}
-		if (model.getStatus() == GameStatus.FINISHED) {
-			model.dealerAI();
-			showDealerTurn(model.getDealerHand());
-			money1Label.setText(formatter.format(calculateMoney(1)));
+			numPlayers = Integer.parseInt(lines[0]);
+			money1 = Double.parseDouble(lines[1]) - bet1;
+			System.out.println(money1);
+			if(numPlayers > 1){
+				money2 = Double.parseDouble(lines[2]) - bet2;
+			}
+			if(numPlayers > 2){
+				money3 = Double.parseDouble(lines[3]) - bet3;
+			}
+			displayGame();
+			
+			
+			money1Label.setText(formatter.format(money1));
 			if (numPlayers > 1) {
-				money2Label.setText(formatter.format(calculateMoney(2)));
+				money2Label.setText(formatter.format(money2));
 			}
 			if (numPlayers > 2) {
-				money3Label.setText(formatter.format(
-						calculateMoney(FIVE - 2)));
+				money3Label.setText(formatter.format(money3));
 			}
-			reply = JOptionPane.showConfirmDialog(null,
-					"Would you like to continue playing with"
-							+ " this many players?", null,
-							JOptionPane.YES_NO_OPTION);
+			scanner.close();
+			scan.close();
+			
+			
 
-			if (reply == JOptionPane.YES_OPTION) {
+
+		} catch (IOException e) {
+
+		}    
+	}
+
+	/**
+	 * Creates a button listener.
+	 * 
+	 * @author Daniel and Dylan
+	 */
+	private class ButtonListener implements ActionListener {
+		/**
+		 * the response from a yes_no_option.
+		 */
+		private int reply = 1;
+
+		/**
+		 * receives the actionEvent and processes it.
+		 * 
+		 * @param event
+		 *            the event to be processed
+		 */
+		public void actionPerformed(final ActionEvent event) {
+			int player = 1;
+
+			if (event.getSource() == playButton) {
 				displayGame();
-			} else if (reply == JOptionPane.NO_OPTION) {
-				updateLeaderboard();
+			} else if (event.getSource() == quitButton) {
+				System.exit(0);
+			} else if (event.getSource() == optionsButton) {
+				displayOptions();
+				return;
+			} else if(event.getSource() == playersButton){ 
+				String[] values = {"1", "2", "3"};
+				Object selection = JOptionPane.showInputDialog(null,
+						"How many players would you like?", "Players",
+						JOptionPane.DEFAULT_OPTION, null, values, "0");
+				if (selection != null){
+					numPlayers = Integer.valueOf((String)selection);
+				}
+				return;
+			} else if(event.getSource() == menuButton) {
 				displayMenu();
+				return;
+			} else if(event.getSource() == saveButton) {
+				saveGame();
+				return;
+			} else if(event.getSource() == loadButton) {
+				loadGame();
+				return;
+			} else {
+				if (model.getStatus() == GameStatus.PLAYER1TURN) {
+					player = 1;
+				} else if (model.getStatus() == GameStatus.PLAYER2TURN) {
+					player = 2;
+				} else if (model.getStatus() == GameStatus.PLAYER3TURN) {
+					player = FIVE - 2;
+				}
+
+				if (event.getSource() == hitButton) {
+					model.hitCard(player);
+					showPlayerHand(model.getPlayerHand(player));
+					if (model.getWinStatus(player) == WinStatus.DEALERWIN) {
+
+						if (model.getStatus() == GameStatus.PLAYER1TURN 
+								&& numPlayers > 1) {
+							model.setStatus(GameStatus.PLAYER2TURN);
+							JOptionPane.showMessageDialog(null, 
+									"Player 1 Busts! Player 2's turn.");
+						} else if (model.getStatus() == GameStatus.PLAYER2TURN 
+								&& numPlayers > 2) {
+							model.setStatus(GameStatus.PLAYER3TURN);
+							JOptionPane.showMessageDialog(null,
+									"Player 2 Busts! Player 3's turn.");
+						} else {
+							model.setStatus(GameStatus.FINISHED);
+							JOptionPane.showMessageDialog(null, "Player " 
+									+ player + " Busts! Dealer's turn.");
+						}
+					}
+				} else if (event.getSource() == stayButton) {
+					if (model.getStatus() == GameStatus.PLAYER1TURN 
+							&& numPlayers > 1) {
+						model.setStatus(GameStatus.PLAYER2TURN);
+						JOptionPane.showMessageDialog(null,
+								"Player 1 Stays! Player 2's turn.");
+					} else if (model.getStatus() == GameStatus.PLAYER2TURN 
+							&& numPlayers > 2) {
+						model.setStatus(GameStatus.PLAYER3TURN);
+						JOptionPane.showMessageDialog(null, 
+								"Player 2 Stays! Player 3's turn.");
+
+					} else {
+						model.setStatus(GameStatus.FINISHED);
+						JOptionPane.showMessageDialog(null, 
+								"Player " + player + " Stays! Dealer's turn.");
+					}
+				}
+				if (model.getStatus() == GameStatus.FINISHED) {
+					model.dealerAI();
+					showDealerTurn(model.getDealerHand());
+					money1Label.setText(formatter.format(calculateMoney(1)));
+					if (numPlayers > 1) {
+						money2Label.setText(formatter.format(calculateMoney(2)));
+					}
+					if (numPlayers > 2) {
+						money3Label.setText(formatter.format(
+								calculateMoney(FIVE - 2)));
+					}
+					reply = JOptionPane.showConfirmDialog(null,
+							"Would you like to continue playing with"
+									+ " this many players?", null,
+									JOptionPane.YES_NO_OPTION);
+
+					if (reply == JOptionPane.YES_OPTION) {
+						displayGame();
+					} else if (reply == JOptionPane.NO_OPTION) {
+						updateLeaderboard();
+						displayMenu();
+					}
+				}
 			}
 		}
 	}
-}
 }
