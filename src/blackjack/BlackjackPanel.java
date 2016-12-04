@@ -84,7 +84,7 @@ public class BlackjackPanel extends JPanel {
 	/**
 	 * Creates a save JButton.
 	 */
-	private JButton saveButton;
+	//private JButton saveButton;
 	/**
 	 * Creates a load JButton.
 	 */
@@ -244,9 +244,9 @@ public class BlackjackPanel extends JPanel {
 		menuButton = new JButton("Menu");
 		menuButton.addActionListener(bListener);
 		menuButton.setPreferredSize(buttonDim);
-		saveButton = new JButton("Save");
-		saveButton.addActionListener(bListener);
-		saveButton.setPreferredSize(buttonDim);
+//		saveButton = new JButton("Save");
+//		saveButton.addActionListener(bListener);
+//		saveButton.setPreferredSize(buttonDim);
 		loadButton = new JButton("Load");
 		loadButton.addActionListener(bListener);
 		loadButton.setPreferredSize(buttonDim);
@@ -297,7 +297,7 @@ public class BlackjackPanel extends JPanel {
 
 		c.gridx = 1;
 		c.gridy = 0;
-		mainPanel.add(saveButton, c);
+		//mainPanel.add(saveButton, c);
 		
 		c.gridx = 0;
 		c.gridy = 2;
@@ -381,7 +381,7 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.removeAll();
 		c.gridx = 2;
 		c.gridy = 1;
-		c.insets = new Insets(0,25,0,0);
+		c.insets = new Insets(0,18,0,0);
 		mainPanel.add(playButton, c);
 		c.gridx = 2;
 		c.gridy = 2;
@@ -871,7 +871,7 @@ public class BlackjackPanel extends JPanel {
 
 
 		} catch (IOException e) {
-
+			JOptionPane.showMessageDialog(null, "There arent any saved files.");
 		}    
 	}
 
@@ -914,10 +914,7 @@ public class BlackjackPanel extends JPanel {
 			} else if(event.getSource() == menuButton) {
 				displayMenu();
 				return;
-			} else if(event.getSource() == saveButton) {
-				saveGame();
-				return;
-			} else if(event.getSource() == loadButton) {
+			}  else if(event.getSource() == loadButton) {
 				loadGame();
 				return;
 			} else {
@@ -985,9 +982,21 @@ public class BlackjackPanel extends JPanel {
 									JOptionPane.YES_NO_OPTION);
 
 					if (reply == JOptionPane.YES_OPTION) {
+						
 						displayGame();
 					} else if (reply == JOptionPane.NO_OPTION) {
-						updateLeaderboard();
+						reply = JOptionPane.showConfirmDialog(null,
+								"Would you like to save the game"
+										+ " to continue later?", null,
+										JOptionPane.YES_NO_OPTION);
+						if (reply == JOptionPane.YES_OPTION) {
+							saveGame();
+							JOptionPane.showMessageDialog(null, 
+									"Game saved!");
+						}
+						else{
+							updateLeaderboard();
+						}
 						displayMenu();
 					}
 				}
