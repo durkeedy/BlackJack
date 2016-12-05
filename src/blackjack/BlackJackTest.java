@@ -162,140 +162,146 @@ public class BlackJackTest {
 		}
 	}
 
-		@Test
-		public void testGameStatus1() {
+	@Test
+	public void testWinStatus1() {
+		for (int players = 1; players < 4; players++) {
 			boolean condition1 = false;
 			boolean condition2 = false;
 			boolean condition3 = false;
-			
 			while (condition1 == false || condition2 == false || condition3 == false) {
-				BlackjackModel m = new BlackjackModel();
-				Assert.assertEquals(m.getStatus(), GameStatus.INPROGRESS);
-				m.checkWinner();
-				if (m.getDealerHand().getHandValue() > m.getPlayerHand().getHandValue()) {
-					Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+				BlackjackModel m = new BlackjackModel(players);
+				Assert.assertEquals(m.getWinStatus(players), WinStatus.INPROGRESS);
+				m.checkWinner(players);
+				if (m.getDealerHand().getHandValue() > m.getPlayerHand(players).getHandValue()) {
+					Assert.assertEquals(m.getWinStatus(players), WinStatus.DEALERWIN);
 					condition1 = true;
-				}
-				else if (m.getDealerHand().getHandValue() < m.getPlayerHand().getHandValue()) {
-					Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
+				} else if (m.getDealerHand().getHandValue() < m.getPlayerHand(players).getHandValue()) {
+					Assert.assertEquals(m.getWinStatus(players), WinStatus.PLAYERWIN);
 					condition2 = true;
-				} else if (m.getDealerHand().getHandValue() == m.getPlayerHand().getHandValue()) {
-					Assert.assertEquals(m.getStatus(), GameStatus.PUSH);
+				} else if (m.getDealerHand().getHandValue() == m.getPlayerHand(players).getHandValue()) {
+					Assert.assertEquals(m.getWinStatus(players), WinStatus.PUSH);
 					condition3 = true;
 				}
 			}
-			BlackjackModel m = new BlackjackModel();
-			for(int i = 0; i < 15; i++)
-				m.hitCard(m.getPlayerHand());
-			
-			Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+			BlackjackModel m = new BlackjackModel(players);
+			for (int i = 0; i < 15; i++)
+				m.hitCard(players);
+
+			Assert.assertEquals(m.getWinStatus(players), WinStatus.DEALERWIN);
 		}
+	}
 
 	@Test
-	public void testGameStatus() {
-		GameStatus s = GameStatus.DEALERWIN;
-		Assert.assertEquals(s, GameStatus.DEALERWIN);
-		s = GameStatus.PLAYERWIN;
-		Assert.assertEquals(s, GameStatus.PLAYERWIN);
-		s = GameStatus.INPROGRESS;
-		Assert.assertEquals(s, GameStatus.INPROGRESS);
-		s = GameStatus.PUSH;
-		Assert.assertEquals(s, GameStatus.PUSH);
+	public void testWinStatus() {
+		WinStatus s = WinStatus.DEALERWIN;
+		Assert.assertEquals(s, WinStatus.DEALERWIN);
+		s = WinStatus.PLAYERWIN;
+		Assert.assertEquals(s, WinStatus.PLAYERWIN);
+		s = WinStatus.INPROGRESS;
+		Assert.assertEquals(s, WinStatus.INPROGRESS);
+		s = WinStatus.PUSH;
+		Assert.assertEquals(s, WinStatus.PUSH);
 
 	}
 
 	@Test
 	public void testCheckWinner() {
-		BlackjackModel m = new BlackjackModel();
-		Assert.assertEquals(m.getStatus(), GameStatus.INPROGRESS);
-		int x = 21 - m.getPlayerHand().getHandValue();
-		Rank r = Rank.KING;
-		if(x>10){
-			m.getPlayerHand().addCard(new Card(r,Suit.CLUBS));
-			x-=10;
-		}
-		if (x<=10){
-			switch (x){
-			case 1:
-				r = Rank.ACE;
-				break;
-			case 2:
-				r = Rank.TWO;
-				break;
-			case 3:
-				r = Rank.THREE;
-				break;
-			case 4:
-				r = Rank.FOUR;
-				break;
-			case 5:
-				r = Rank.FIVE;
-				break;
-			case 6:
-				r = Rank.SIX;
-				break;
-			case 7:
-				r = Rank.SEVEN;
-				break;
-			case 8:
-				r = Rank.EIGHT;
-				break;
-			case 9:
-				r = Rank.NINE;
-				break;
-			case 10:
-				r = Rank.TEN;
-				break;
+		for (int players = 1; players < 4; players++) {
+			BlackjackModel m = new BlackjackModel(players);
+			Assert.assertEquals(m.getWinStatus(players), WinStatus.INPROGRESS);
+			int x = 21 - m.getPlayerHand(players).getHandValue();
+			Rank r = Rank.KING;
+			if (x > 10) {
+				m.getPlayerHand(players).addCard(new Card(r, Suit.CLUBS));
+				x -= 10;
 			}
-			m.getPlayerHand().addCard(new Card(r,Suit.CLUBS));
-			Assert.assertEquals(m.getPlayerHand().getHandValue(),21);
-			if(m.getDealerHand().getHandValue()==21 && m.getDealerHand().getSize()==2) {// dealer blackjack
-				m.checkWinner();
-				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
-			} else{
-				m.dealerAI();
-				if(m.getDealerHand().getHandValue()==21) {
-					Assert.assertEquals(m.getStatus(), GameStatus.PUSH);
-				} else if (m.getDealerHand().getHandValue() < 21){
-					Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
-				} else
-					Assert.assertEquals(m.getStatus(), GameStatus.PLAYERWIN);
-			}
-			if(m.getDealerHand().getHandValue()<=21) {
-				m.hitCard(m.getPlayerHand());
-				Assert.assertEquals(m.getStatus(), GameStatus.DEALERWIN);
+			if (x <= 10) {
+				switch (x) {
+				case 1:
+					r = Rank.ACE;
+					break;
+				case 2:
+					r = Rank.TWO;
+					break;
+				case 3:
+					r = Rank.THREE;
+					break;
+				case 4:
+					r = Rank.FOUR;
+					break;
+				case 5:
+					r = Rank.FIVE;
+					break;
+				case 6:
+					r = Rank.SIX;
+					break;
+				case 7:
+					r = Rank.SEVEN;
+					break;
+				case 8:
+					r = Rank.EIGHT;
+					break;
+				case 9:
+					r = Rank.NINE;
+					break;
+				case 10:
+					r = Rank.TEN;
+					break;
+				}
+				m.getPlayerHand(players).addCard(new Card(r, Suit.CLUBS));
+				Assert.assertEquals(m.getPlayerHand(players).getHandValue(), 21);
+				if (m.getDealerHand().getHandValue() == 21 && m.getDealerHand().getSize() == 2) {// dealer
+																									// blackjack
+					m.checkWinner(players);
+					Assert.assertEquals(m.getWinStatus(players), WinStatus.DEALERWIN);
+				} else {
+					m.dealerAI();
+					if (m.getDealerHand().getHandValue() == 21) {
+						Assert.assertEquals(m.getWinStatus(players), WinStatus.PUSH);
+					} else if (m.getDealerHand().getHandValue() < 21) {
+						Assert.assertEquals(m.getWinStatus(players), WinStatus.PLAYERWIN);
+					} else
+						Assert.assertEquals(m.getWinStatus(players), WinStatus.PLAYERWIN);
+				}
+				if (m.getDealerHand().getHandValue() <= 21) {
+					m.hitCard(players);
+					Assert.assertEquals(m.getWinStatus(players), WinStatus.DEALERWIN);
+				}
 			}
 		}
 
 	}
 
-
 	@Test
 	public void testHitCard() {
-		int temp;
-		BlackjackModel m = new BlackjackModel();
-		temp = m.getPlayerHand().getSize();
-		m.hitCard(m.getPlayerHand());
-		Assert.assertNotEquals(m.getPlayerHand().getSize(), temp);
+		for (int players = 1; players < 4; players++) {
+			int temp;
+			BlackjackModel m = new BlackjackModel(players);
+			temp = m.getPlayerHand(players).getSize();
+			m.hitCard(players);
+			Assert.assertNotEquals(m.getPlayerHand(players).getSize(), temp);
+		}
 	}
 
 	@Test
 	public void testDealerAi() {
-		boolean condition1 = false;
-		boolean condition2 = false;
-		while (condition1 == false || condition2 == false) {
-			BlackjackModel m = new BlackjackModel();
-			int temp = m.getDealerHand().getSize();
-			if (m.getDealerHand().getHandValue() < 17) {
-				m.dealerAI();
-				condition1 = true;
-				Assert.assertNotEquals(m.getDealerHand().getSize(), temp);
-			} else if (m.getDealerHand().getHandValue() >= 17) {
-				m.dealerAI();
-				condition2 = true;
-				Assert.assertEquals(m.getDealerHand().getSize(), temp);
-			}
+		for (int players = 1; players < 4; players++) {
+			boolean condition1 = false;
+			boolean condition2 = false;
+			while (condition1 == false || condition2 == false) {
+				BlackjackModel m = new BlackjackModel(players);
+				int temp = m.getDealerHand().getSize();
+				if (m.getDealerHand().getHandValue() < 17) {
+					m.dealerAI();
+					condition1 = true;
+					Assert.assertNotEquals(m.getDealerHand().getSize(), temp);
+				} else if (m.getDealerHand().getHandValue() >= 17) {
+					m.dealerAI();
+					condition2 = true;
+					Assert.assertEquals(m.getDealerHand().getSize(), temp);
+				}
 
+			}
 		}
 	}
 }

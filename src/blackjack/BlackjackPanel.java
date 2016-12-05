@@ -17,18 +17,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
@@ -209,7 +205,14 @@ public class BlackjackPanel extends JPanel {
 	 * A formatter to format doubles.
 	 */
 	private NumberFormat formatter;
-
+	/**
+	 * A font size.
+	 */
+	private static final int FONTSIZE = 12;
+	/**
+	 * Insets for the panel elements.
+	 */
+	private static final int INSETS = 18;
 	/**
 	 * The constructor for a BlackjackPanel.
 	 */
@@ -230,7 +233,7 @@ public class BlackjackPanel extends JPanel {
 		money3Label.setVerticalAlignment(SwingConstants.NORTH);
 		leaderBoardField = new JTextPane();
 		leaderBoardField.setEditable(false);
-		leaderBoardField.setFont(new Font("Tahoma", Font.BOLD, 12));
+		leaderBoardField.setFont(new Font("Tahoma", Font.BOLD, FONTSIZE));
 		leaderBoardField.setText("Leaderboard \n");
 		playButton = new JButton("Play");
 		playButton.addActionListener(bListener);
@@ -347,9 +350,9 @@ public class BlackjackPanel extends JPanel {
 		formatter = NumberFormat.getCurrencyInstance();
 		
 		validateBet(1);
-		if (bet1 != 0){
+		if (bet1 != 0) {
 			validateBet(2);
-			if (bet2 != 0){
+			if (bet2 != 0) {
 				validateBet(FIVE - 2);
 			}
 		}
@@ -372,7 +375,7 @@ public class BlackjackPanel extends JPanel {
 	 * a helper method that displays the main menu.
 	 */
 	private void displayMenu() {
-		if(model != null){
+		if (model != null) {
 			model.setStatus(GameStatus.PLAYER1TURN);
 		}
 		money1 = STARTINGMONEY;
@@ -381,7 +384,7 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.removeAll();
 		c.gridx = 2;
 		c.gridy = 1;
-		c.insets = new Insets(0,18,0,0);
+		c.insets = new Insets(0, INSETS, 0, 0);
 		mainPanel.add(playButton, c);
 		c.gridx = 2;
 		c.gridy = 2;
@@ -389,15 +392,15 @@ public class BlackjackPanel extends JPanel {
 		c.gridx = 2;
 		c.gridy = FIVE - 2;
 		mainPanel.add(quitButton, c);
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0, 0, 0, 0);
 		c.gridx = 1;
 		c.gridy = 0;
-		c.gridwidth = 3;
+		c.gridwidth = FIVE - 2;
 		mainPanel.add(logoLabel, c);
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 1;
-		c.gridheight = 5;
+		c.gridheight = FIVE - 2;
 		mainPanel.add(leaderBoardField, c);
 		c.gridwidth = 1;
 		c.gridheight = 1;
@@ -407,7 +410,11 @@ public class BlackjackPanel extends JPanel {
 		mainPanel.repaint();
 	}
 
-	private void displayOptions(){		
+	/**
+	 * a helper method that displays the options menu when options is clicked
+	 * on the main menu.
+	 */
+	private void displayOptions() {		
 		mainPanel.removeAll();
 		c.gridx = 1;
 		c.gridy = 0;
@@ -419,7 +426,7 @@ public class BlackjackPanel extends JPanel {
 		c.gridy = 2;
 		mainPanel.add(loadButton, c);
 		c.gridx = 1;
-		c.gridy = FIVE -2;
+		c.gridy = FIVE - 2;
 		mainPanel.add(menuButton, c);
 		add(mainPanel);
 		mainPanel.revalidate();
@@ -427,16 +434,18 @@ public class BlackjackPanel extends JPanel {
 		
 	}
 
-	private void displayLeaderboard(){
+	/**
+	 * a helper method that displays the leaderboard on the main menu.
+	 */	
+	private void displayLeaderboard() {
 		File file = new File("leaderboard.txt");
 		leaderBoardField.setText("Leaderboard \n");
 		try {
 			Scanner scanner = new Scanner(file);
 			Scanner scan = scanner;
-			String[] line = new String[2];
 			int i = 1;
 			while (scan.hasNextLine()) {
-				line = scan.nextLine().split("\\s");
+				String[] line = scan.nextLine().split("\\s");
 				leaderBoardField.setText(leaderBoardField.getText()
 						+ "\n" + i + ". " + line[0] + " $" + line[1] + "0");
 				i++;
@@ -525,7 +534,7 @@ public class BlackjackPanel extends JPanel {
 	 * a helper method that calculates the earnings from the hand.
 	 * 
 	 * @param player
-	 *            is the players hand
+	 *            is the player whos hand we calculate for
 	 * @return the amount of money the player now has
 	 */
 	private double calculateMoney(final int player) {
@@ -555,8 +564,8 @@ public class BlackjackPanel extends JPanel {
 			money += bet * 2;
 		} else if (model.getWinStatus(player) == WinStatus.PUSH) {
 			JOptionPane.showMessageDialog(null, "Player " + player 
-					+ " tied the dealer. You get back " + 
-					formatter.format(bet));
+					+ " tied the dealer. You get back "
+					+ formatter.format(bet));
 			money += bet;
 		} else {
 			JOptionPane.showMessageDialog(null, "Player " + player 
@@ -575,15 +584,6 @@ public class BlackjackPanel extends JPanel {
 
 		return money;
 
-	}
-
-	/**
-	 * Getter for the number of players.
-	 * 
-	 * @return the number of players
-	 */
-	public final int getNumPlayers() {
-		return numPlayers;
 	}
 
 	/**
@@ -641,7 +641,7 @@ public class BlackjackPanel extends JPanel {
 	}
 
 	/**
-	 * updates the leaderboard.
+	 * updates the leaderboard of the main menu.
 	 */
 	private void updateLeaderboard() {
 		//final int newPeople = 13;
@@ -676,24 +676,25 @@ public class BlackjackPanel extends JPanel {
 			FileOutputStream fos = new FileOutputStream(file);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			double money = money1;
-			for(int i = 0; i < numPlayers; i++) {
-				if(money >= leaders[topTen-1]){
+			for (int i = 0; i < numPlayers; i++) {
+				if (money >= leaders[topTen - 1]) {
 					double userMoney = money, tempMoney;
 					String userString = JOptionPane.showInputDialog(null,
-							" Player " + (i+1) + " please enter your name for the leaderboard.");
-					if (userString == null){
-
-					}
-					else{
+							" Player " + (i + 1) + " please enter your"
+									+ " name for the leaderboard.");
+					if (userString == null) {
+						continue;
+					} else {
 						while (userString.equals("")) {
 							userString = JOptionPane.showInputDialog(null,
-									" Player " + (i+1) + " invalid name, please try again.");
+									" Player " + (i + 1) + " invalid name,"
+											+ " please try again.");
 						}
 						userString = userString.trim();
 						userString = userString.replaceAll("\\s+", "");
 						String tempString;
-						for (int j = 0; j <10 ; j++) {
-							if(leaders[j] < userMoney){
+						for (int j = 0; j < topTen; j++) {
+							if (leaders[j] < userMoney) {
 								tempMoney = leaders[j];
 								leaders[j] = userMoney;
 								userMoney = tempMoney;
@@ -704,17 +705,17 @@ public class BlackjackPanel extends JPanel {
 						}
 					}
 				}
-				if(i == 0){
+				if (i == 0) {
 					money = money2;
 				}
-				if (i == 1){
+				if (i == 1) {
 					money = money3;
 				}
 			}
 
-			for (int i = 0; i <10 ; i++) {
-				if(names[i] != null){
-					bw.write(names[i] + " " +leaders[i]);
+			for (int i = 0; i < topTen; i++) {
+				if (names[i] != null) {
+					bw.write(names[i] + " " + leaders[i]);
 					bw.newLine();
 				}
 			}
@@ -722,7 +723,7 @@ public class BlackjackPanel extends JPanel {
 			bw.close();
 
 
-		} catch(IOException e) {
+		} catch (IOException e) {
 		} 
 	}
 
@@ -806,7 +807,7 @@ public class BlackjackPanel extends JPanel {
 	/**
 	 * Saves the game.
 	 */
-	private void saveGame(){
+	private void saveGame() {
 		try {
 			File file = new File("save.txt");
 			FileOutputStream fos = new FileOutputStream(file);
@@ -814,27 +815,27 @@ public class BlackjackPanel extends JPanel {
 			double money = money1;
 			bw.write("" + numPlayers);
 			bw.newLine();
-			for(int i = 0; i < numPlayers; i++) {	
+			for (int i = 0; i < numPlayers; i++) {	
 				
 				bw.write("" + money);
 				bw.newLine();
-				if(i==0){
+				if (i == 0) {
 					money = money2;
 				}
-				if(i==1){
+				if (i == 1) {
 					money = money3;
 				}
 				
 			}
 			bw.close();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			
 		} 
 	}
 	/**
 	 * Loads the game.
 	 */
-	private void loadGame(){
+	private void loadGame() {
 		try {
 			File file = new File("save.txt");
 			Scanner scanner = new Scanner(file);
@@ -848,11 +849,11 @@ public class BlackjackPanel extends JPanel {
 			}
 			numPlayers = Integer.parseInt(lines[0]);
 			money1 = Double.parseDouble(lines[1]) - bet1;
-			if(numPlayers > 1){
+			if (numPlayers > 1) {
 				money2 = Double.parseDouble(lines[2]) - bet2;
 			}
-			if(numPlayers > 2){
-				money3 = Double.parseDouble(lines[3]) - bet3;
+			if (numPlayers > 2) {
+				money3 = Double.parseDouble(lines[FIVE - 2]) - bet3;
 			}
 			displayGame();
 			
@@ -902,19 +903,19 @@ public class BlackjackPanel extends JPanel {
 			} else if (event.getSource() == optionsButton) {
 				displayOptions();
 				return;
-			} else if(event.getSource() == playersButton){ 
+			} else if (event.getSource() == playersButton) { 
 				String[] values = {"1", "2", "3"};
 				Object selection = JOptionPane.showInputDialog(null,
 						"How many players would you like?", "Players",
 						JOptionPane.DEFAULT_OPTION, null, values, "0");
-				if (selection != null){
-					numPlayers = Integer.valueOf((String)selection);
+				if (selection != null) {
+					numPlayers = Integer.parseInt((String) selection);
 				}
 				return;
-			} else if(event.getSource() == menuButton) {
+			} else if (event.getSource() == menuButton) {
 				displayMenu();
 				return;
-			}  else if(event.getSource() == loadButton) {
+			}  else if (event.getSource() == loadButton) {
 				loadGame();
 				return;
 			} else {
@@ -970,7 +971,8 @@ public class BlackjackPanel extends JPanel {
 					showDealerTurn(model.getDealerHand());
 					money1Label.setText(formatter.format(calculateMoney(1)));
 					if (numPlayers > 1) {
-						money2Label.setText(formatter.format(calculateMoney(2)));
+						money2Label.setText(formatter.
+								format(calculateMoney(2)));
 					}
 					if (numPlayers > 2) {
 						money3Label.setText(formatter.format(
@@ -993,8 +995,7 @@ public class BlackjackPanel extends JPanel {
 							saveGame();
 							JOptionPane.showMessageDialog(null, 
 									"Game saved!");
-						}
-						else{
+						} else {
 							updateLeaderboard();
 						}
 						displayMenu();
