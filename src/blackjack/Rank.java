@@ -1,5 +1,4 @@
 package blackjack;
-
 /**
  * Enum that holds the rank and value of each card.
  */

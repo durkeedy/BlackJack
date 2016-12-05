@@ -247,6 +247,8 @@ public class BlackJackTest {
 				case 10:
 					r = Rank.TEN;
 					break;
+				default:
+					break;
 				}
 				m.getPlayerHand(players).addCard(new Card(r, Suit.CLUBS));
 				Assert.assertEquals(m.getPlayerHand(players).getHandValue(), 21);
@@ -258,18 +260,11 @@ public class BlackJackTest {
 					m.dealerAI();
 					if (m.getDealerHand().getHandValue() == 21) {
 						Assert.assertEquals(m.getWinStatus(players), WinStatus.PUSH);
-					} else if (m.getDealerHand().getHandValue() < 21) {
-						Assert.assertEquals(m.getWinStatus(players), WinStatus.PLAYERWIN);
 					} else
 						Assert.assertEquals(m.getWinStatus(players), WinStatus.PLAYERWIN);
 				}
-				if (m.getDealerHand().getHandValue() <= 21) {
-					m.hitCard(players);
-					Assert.assertEquals(m.getWinStatus(players), WinStatus.DEALERWIN);
-				}
 			}
 		}
-
 	}
 
 	@Test

@@ -78,10 +78,6 @@ public class BlackjackPanel extends JPanel {
 	 */
 	private JButton playersButton;
 	/**
-	 * Creates a save JButton.
-	 */
-	//private JButton saveButton;
-	/**
 	 * Creates a load JButton.
 	 */
 	private JButton loadButton;
@@ -247,9 +243,6 @@ public class BlackjackPanel extends JPanel {
 		menuButton = new JButton("Menu");
 		menuButton.addActionListener(bListener);
 		menuButton.setPreferredSize(buttonDim);
-//		saveButton = new JButton("Save");
-//		saveButton.addActionListener(bListener);
-//		saveButton.setPreferredSize(buttonDim);
 		loadButton = new JButton("Load");
 		loadButton.addActionListener(bListener);
 		loadButton.setPreferredSize(buttonDim);
@@ -297,10 +290,6 @@ public class BlackjackPanel extends JPanel {
 	private void displayGame() {
 		model = new BlackjackModel(numPlayers);
 		mainPanel.removeAll();
-
-		c.gridx = 1;
-		c.gridy = 0;
-		//mainPanel.add(saveButton, c);
 		
 		c.gridx = 0;
 		c.gridy = 2;
@@ -400,7 +389,7 @@ public class BlackjackPanel extends JPanel {
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 1;
-		c.gridheight = FIVE - 2;
+		c.gridheight = FIVE;
 		mainPanel.add(leaderBoardField, c);
 		c.gridwidth = 1;
 		c.gridheight = 1;
@@ -441,8 +430,7 @@ public class BlackjackPanel extends JPanel {
 		File file = new File("leaderboard.txt");
 		leaderBoardField.setText("Leaderboard \n");
 		try {
-			Scanner scanner = new Scanner(file);
-			Scanner scan = scanner;
+			Scanner scan = new Scanner(file);
 			int i = 1;
 			while (scan.hasNextLine()) {
 				String[] line = scan.nextLine().split("\\s");
@@ -450,7 +438,6 @@ public class BlackjackPanel extends JPanel {
 						+ "\n" + i + ". " + line[0] + " $" + line[1] + "0");
 				i++;
 			}
-			scanner.close();
 			scan.close();
 		} catch (IOException e) {
 
@@ -472,10 +459,18 @@ public class BlackjackPanel extends JPanel {
 				JOptionPane.showMessageDialog(null, 
 						"Every player must have a bet. "
 								+ "Returning to menu.");
-				updateLeaderboard();
+				int reply = JOptionPane.showConfirmDialog(null,
+						"Would you like to save the game"
+								+ " to continue later?", null,
+								JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					saveGame();
+					JOptionPane.showMessageDialog(null, 
+							"Game saved!");
+				} else {
+					updateLeaderboard();
+				}
 				displayMenu();
-
-
 				return true;
 			} else {
 				return false;
@@ -644,8 +639,6 @@ public class BlackjackPanel extends JPanel {
 	 * updates the leaderboard of the main menu.
 	 */
 	private void updateLeaderboard() {
-		//final int newPeople = 13;
-
 		final int topTen = 10;
 		String[] lines = new String[topTen];
 		String[] names = new String[topTen];
@@ -653,8 +646,7 @@ public class BlackjackPanel extends JPanel {
 		File file = new File("leaderboard.txt");
 
 		try {
-			Scanner scanner = new Scanner(file);
-			Scanner scan = scanner;
+			Scanner scan = new Scanner(file);
 			int i = 0; 
 			while (scan.hasNextLine()) {
 				lines[i] = scan.nextLine();
@@ -663,10 +655,7 @@ public class BlackjackPanel extends JPanel {
 				leaders[i] = Double.parseDouble(lines[i].split("\\s")[1]);
 				i++;
 			}
-
-			scanner.close();
 			scan.close();
-
 
 		} catch (IOException e) {
 
@@ -677,7 +666,7 @@ public class BlackjackPanel extends JPanel {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			double money = money1;
 			for (int i = 0; i < numPlayers; i++) {
-				if (money >= leaders[topTen - 1]) {
+				if (money > leaders[topTen - 1]) {
 					double userMoney = money, tempMoney;
 					String userString = JOptionPane.showInputDialog(null,
 							" Player " + (i + 1) + " please enter your"
@@ -685,10 +674,15 @@ public class BlackjackPanel extends JPanel {
 					if (userString == null) {
 						continue;
 					} else {
+						userString = userString.trim();
+						userString = userString.replaceAll("\\s+", "");
 						while (userString.equals("")) {
 							userString = JOptionPane.showInputDialog(null,
 									" Player " + (i + 1) + " invalid name,"
 											+ " please try again.");
+							if (userString == null) {
+								userString = "";
+							}
 						}
 						userString = userString.trim();
 						userString = userString.replaceAll("\\s+", "");
@@ -838,8 +832,7 @@ public class BlackjackPanel extends JPanel {
 	private void loadGame() {
 		try {
 			File file = new File("save.txt");
-			Scanner scanner = new Scanner(file);
-			Scanner scan = scanner;
+			Scanner scan = new Scanner(file);
 			int i = 0; 
 			final int topTen = 10;
 			String[] lines = new String[topTen];
@@ -865,14 +858,11 @@ public class BlackjackPanel extends JPanel {
 			if (numPlayers > 2) {
 				money3Label.setText(formatter.format(money3));
 			}
-			scanner.close();
 			scan.close();
-			
-			
-
 
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "There arent any saved files.");
+			JOptionPane.showMessageDialog(null,
+					"There aren't any saved files.");
 		}    
 	}
 
